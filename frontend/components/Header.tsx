@@ -4,10 +4,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Menu, X, ShoppingCart, User, LogIn, LogOut } from 'lucide-react'
+import { useCartStore } from '@/store/cartStore'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false) // TODO: Get from auth context
+  const cartItemCount = useCartStore((state) => state.getTotalItems())
 
   const handleLogout = () => {
     // TODO: Implement actual logout logic
@@ -63,9 +65,11 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <Link href="/cart" className="relative p-2 hover:text-ottoman-gold transition-colors">
               <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-1 -right-1 bg-ottoman-red text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                0
-              </span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-ottoman-red text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
             <Link href="/profile" className="p-2 hover:text-ottoman-gold transition-colors">
               <User className="w-6 h-6" />
@@ -119,7 +123,7 @@ export default function Header() {
               <div className="flex items-center space-x-4 pt-4 border-t border-ottoman-gold/20">
                 <Link href="/cart" className="flex items-center space-x-2">
                   <ShoppingCart className="w-5 h-5" />
-                  <span>Sepetim (0)</span>
+                  <span>Sepetim ({cartItemCount})</span>
                 </Link>
                 <Link href="/profile" className="flex items-center space-x-2">
                   <User className="w-5 h-5" />

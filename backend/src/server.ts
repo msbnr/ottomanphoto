@@ -11,6 +11,8 @@ import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
 import orderRoutes from './routes/orderRoutes';
 import franchiseRoutes from './routes/franchiseRoutes';
+import campaignRoutes from './routes/campaignRoutes';
+import pageRoutes from './routes/pageRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -56,6 +58,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/franchise', franchiseRoutes);
+app.use('/api/campaigns', campaignRoutes);
+app.use('/api/pages', pageRoutes);
 
 // Error handling
 app.use(notFound);

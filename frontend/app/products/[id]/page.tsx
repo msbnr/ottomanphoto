@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ShoppingCart, Heart, Share2, Check, Minus, Plus, Package, Truck, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { useCartStore } from '@/store/cartStore'
 
 // Mock data - will be replaced with API call
 const product = {
@@ -46,13 +47,30 @@ const product = {
 
 export default function ProductDetailPage() {
   const params = useParams()
+  const addToCart = useCartStore((state) => state.addItem)
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState(0)
   const [addedToCart, setAddedToCart] = useState(false)
 
   const handleAddToCart = () => {
+    // Sepete ürünü ekle
+    addToCart(
+      {
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        price: product.price,
+        boxQuantity: product.boxQuantity,
+      },
+      quantity
+    )
+
+    // Başarı animasyonunu göster
     setAddedToCart(true)
     setTimeout(() => setAddedToCart(false), 2000)
+
+    // Miktarı sıfırla
+    setQuantity(1)
   }
 
   return (

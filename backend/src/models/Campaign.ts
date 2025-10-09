@@ -146,7 +146,7 @@ campaignSchema.index({ isActive: 1, startDate: 1, endDate: 1 });
 campaignSchema.index({ type: 1 });
 
 // Method to check if campaign is currently valid
-campaignSchema.methods.isValid = function(): boolean {
+campaignSchema.methods.isValidCampaign = function(): boolean {
   const now = new Date();
   return (
     this.isActive &&

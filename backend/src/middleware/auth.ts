@@ -98,3 +98,26 @@ export const optionalAuth = async (req: Request, res: Response, next: NextFuncti
     next();
   }
 };
+
+// Alias exports for backward compatibility
+export const auth = authenticate;
+
+// Admin authentication middleware
+export const adminAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  await authenticate(req, res, async () => {
+    if (!req.user) {
+      res.status(401).json({ success: false, message: 'Not authenticated' });
+      return;
+    }
+
+    if (req.user.userType !== 'admin') {
+      res.status(403).json({
+        success: false,
+        message: 'Access denied. Admin privileges required.',
+      });
+      return;
+    }
+
+    next();
+  });
+};

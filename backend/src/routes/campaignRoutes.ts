@@ -41,7 +41,18 @@ router.post('/apply', auth, async (req, res) => {
     const { campaignId, cart } = req.body;
     const campaign = await Campaign.findById(campaignId);
 
-    if (!campaign || !campaign.isValid()) {
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+
+    // Check if campaign is valid
+    const now = new Date();
+    const isValid = campaign.isActive &&
+      campaign.startDate <= now &&
+      campaign.endDate >= now &&
+      (!campaign.usageLimit?.totalUsage || campaign.usageLimit.currentUsage < campaign.usageLimit.totalUsage);
+
+    if (!isValid) {
       return res.status(400).json({ message: 'Invalid or expired campaign' });
     }
 

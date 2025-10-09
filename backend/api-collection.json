@@ -1,0 +1,407 @@
+{
+  "info": {
+    "name": "Ottoman Platform API",
+    "description": "Complete API collection for Ottoman Platform",
+    "version": "1.0.0"
+  },
+  "requests": [
+    {
+      "name": "Health Check",
+      "method": "GET",
+      "url": "http://localhost:5000/health",
+      "headers": [],
+      "body": null
+    },
+    {
+      "name": "Register Customer",
+      "method": "POST",
+      "url": "http://localhost:5000/api/auth/register/customer",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "email": "customer@test.com",
+          "password": "123456",
+          "firstName": "Ahmet",
+          "lastName": "Yılmaz",
+          "phone": "+905551234567"
+        }
+      }
+    },
+    {
+      "name": "Register Dealer",
+      "method": "POST",
+      "url": "http://localhost:5000/api/auth/register/dealer",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "email": "dealer@test.com",
+          "password": "123456",
+          "companyName": "ABC Ticaret Ltd.",
+          "taxNumber": "1234567890",
+          "dealerTier": "medium",
+          "phone": "+905551234567",
+          "address": {
+            "street": "Test Sokak No:1",
+            "city": "İstanbul",
+            "state": "İstanbul",
+            "country": "Türkiye",
+            "postalCode": "34000"
+          }
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "method": "POST",
+      "url": "http://localhost:5000/api/auth/login",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "email": "customer@test.com",
+          "password": "123456"
+        }
+      }
+    },
+    {
+      "name": "Get Profile",
+      "method": "GET",
+      "url": "http://localhost:5000/api/auth/profile",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Update Profile",
+      "method": "PUT",
+      "url": "http://localhost:5000/api/auth/profile",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "profile": {
+            "phone": "+905559999999"
+          }
+        }
+      }
+    },
+    {
+      "name": "Get Products (Public)",
+      "method": "GET",
+      "url": "http://localhost:5000/api/products?page=1&limit=20",
+      "headers": [],
+      "body": null
+    },
+    {
+      "name": "Get Products (Authenticated)",
+      "method": "GET",
+      "url": "http://localhost:5000/api/products?page=1&limit=20",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Search Products",
+      "method": "GET",
+      "url": "http://localhost:5000/api/products?search=yazıcı&category=electronics",
+      "headers": [],
+      "body": null
+    },
+    {
+      "name": "Get Product by ID",
+      "method": "GET",
+      "url": "http://localhost:5000/api/products/PRODUCT_ID_HERE",
+      "headers": [],
+      "body": null
+    },
+    {
+      "name": "Create Product (Admin)",
+      "method": "POST",
+      "url": "http://localhost:5000/api/products",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "name": "Premium Lazer Yazıcı",
+          "sku": "YAZICI-001",
+          "description": "Yüksek kaliteli ofis yazıcısı, A4 boyutunda baskı, 30 sayfa/dk hız",
+          "category": "electronics",
+          "images": [
+            "https://example.com/images/printer1.jpg"
+          ],
+          "pricing": {
+            "retail": 5000,
+            "dealer_small": 4500,
+            "dealer_medium": 4200,
+            "dealer_large": 4000,
+            "dealer_main": 3800
+          },
+          "visibility": {
+            "customer": true,
+            "dealer": true,
+            "dealer_main": true
+          },
+          "stock": 50
+        }
+      }
+    },
+    {
+      "name": "Update Product (Admin)",
+      "method": "PUT",
+      "url": "http://localhost:5000/api/products/PRODUCT_ID_HERE",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "stock": 100,
+          "pricing": {
+            "retail": 4800
+          }
+        }
+      }
+    },
+    {
+      "name": "Delete Product (Admin)",
+      "method": "DELETE",
+      "url": "http://localhost:5000/api/products/PRODUCT_ID_HERE",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Create Order",
+      "method": "POST",
+      "url": "http://localhost:5000/api/orders",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "items": [
+            {
+              "productId": "PRODUCT_ID_1",
+              "quantity": 2
+            },
+            {
+              "productId": "PRODUCT_ID_2",
+              "quantity": 1
+            }
+          ],
+          "shippingAddress": {
+            "fullName": "Ahmet Yılmaz",
+            "phone": "+905551234567",
+            "street": "Test Sokak No:5 Daire:3",
+            "city": "İstanbul",
+            "state": "İstanbul",
+            "country": "Türkiye",
+            "postalCode": "34000"
+          },
+          "notes": "Lütfen kapı zilini çalın"
+        }
+      }
+    },
+    {
+      "name": "Get My Orders",
+      "method": "GET",
+      "url": "http://localhost:5000/api/orders/my-orders?page=1&limit=10",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Get Order by ID",
+      "method": "GET",
+      "url": "http://localhost:5000/api/orders/ORDER_ID_HERE",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Get All Orders (Admin)",
+      "method": "GET",
+      "url": "http://localhost:5000/api/orders?page=1&limit=20&status=pending",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Update Order Status (Admin)",
+      "method": "PATCH",
+      "url": "http://localhost:5000/api/orders/ORDER_ID_HERE/status",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "status": "shipped"
+        }
+      }
+    },
+    {
+      "name": "Submit Franchise Application",
+      "method": "POST",
+      "url": "http://localhost:5000/api/franchise/apply",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "fullName": "Mehmet Demir",
+          "location": {
+            "city": "Ankara",
+            "country": "Türkiye"
+          },
+          "concept": "concept1",
+          "contact": {
+            "phone": "+905557778899",
+            "email": "mehmet@example.com"
+          },
+          "agreements": {
+            "terms": true,
+            "privacy": true,
+            "contract": true
+          }
+        }
+      }
+    },
+    {
+      "name": "Get All Franchise Applications (Admin)",
+      "method": "GET",
+      "url": "http://localhost:5000/api/franchise?page=1&limit=20&status=pending",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Get Franchise Application by ID (Admin)",
+      "method": "GET",
+      "url": "http://localhost:5000/api/franchise/APPLICATION_ID_HERE",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        }
+      ],
+      "body": null
+    },
+    {
+      "name": "Update Franchise Application Status (Admin)",
+      "method": "PATCH",
+      "url": "http://localhost:5000/api/franchise/APPLICATION_ID_HERE/status",
+      "headers": [
+        {
+          "key": "Authorization",
+          "value": "Bearer ADMIN_TOKEN_HERE"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": {
+          "status": "approved",
+          "notes": "Başvuru onaylandı, yakında iletişime geçilecek"
+        }
+      }
+    }
+  ],
+  "variables": {
+    "baseUrl": "http://localhost:5000",
+    "token": "YOUR_JWT_TOKEN",
+    "adminToken": "ADMIN_JWT_TOKEN"
+  }
+}

@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 10 10 10;
+    --foreground: 245 245 220;
+    --primary: 212 175 55;
+    --primary-foreground: 10 10 10;
+    --secondary: 139 0 0;
+    --secondary-foreground: 245 245 220;
+  }
+
+  * {
+    @apply border-ottoman-black-lighter;
+  }
+
+  body {
+    @apply bg-[#000000] text-ottoman-cream font-sans antialiased;
+    background: linear-gradient(135deg, #000000 0%, #0A0A0A 100%);
+    background-attachment: fixed;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  /* Modern Clean Background with Subtle Accents */
+  .ottoman-pattern-bg {
+    position: relative;
+    background: linear-gradient(135deg, #000000 0%, #0A0A0A 50%, #050505 100%);
+    background-attachment: fixed;
+  }
+
+  /* Subtle gold accent lines */
+  .ottoman-pattern-bg::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, transparent 0%, transparent 49.5%, rgba(212, 175, 55, 0.03) 50%, transparent 50.5%, transparent 100%),
+      linear-gradient(0deg, transparent 0%, transparent 49.5%, rgba(212, 175, 55, 0.03) 50%, transparent 50.5%, transparent 100%);
+    background-size: 100px 100px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  /* Ensure content is above the overlay */
+  .ottoman-pattern-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Luxurious Button */
+  .btn-ottoman {
+    @apply relative px-8 py-4 bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light
+           text-ottoman-black font-semibold rounded-lg overflow-hidden
+           transition-all duration-300 transform hover:scale-105 hover:shadow-gold-glow;
+  }
+
+  .btn-ottoman::before {
+    content: '';
+    @apply absolute inset-0 bg-gold-shimmer animate-shimmer;
+  }
+
+  /* Secondary Button */
+  .btn-ottoman-secondary {
+    @apply px-8 py-4 bg-ottoman-red hover:bg-ottoman-red-light
+           text-ottoman-cream font-semibold rounded-lg
+           transition-all duration-300 transform hover:scale-105
+           border-2 border-ottoman-gold/30;
+  }
+
+  /* Outline Button */
+  .btn-ottoman-outline {
+    @apply px-8 py-4 bg-transparent border-2 border-ottoman-gold
+           text-ottoman-gold font-semibold rounded-lg
+           transition-all duration-300 transform hover:scale-105
+           hover:bg-ottoman-gold hover:text-ottoman-black;
+  }
+
+  /* Card with Modern Ottoman Style */
+  .card-ottoman {
+    @apply bg-gradient-to-br from-[#0A0A0A] to-[#000000] border border-ottoman-gold/10
+           rounded-xl p-6 shadow-2xl backdrop-blur-sm
+           transition-all duration-300 hover:border-ottoman-gold/30
+           hover:shadow-gold-glow hover:scale-[1.02];
+  }
+
+  /* Decorative Header */
+  .header-ottoman {
+    @apply relative text-4xl md:text-5xl lg:text-6xl font-serif font-bold
+           text-transparent bg-clip-text bg-gradient-to-r
+           from-ottoman-gold via-ottoman-gold-light to-ottoman-gold;
+  }
+
+  .header-ottoman::after {
+    content: '';
+    @apply absolute -bottom-4 left-1/2 transform -translate-x-1/2
+           w-32 h-1 bg-gradient-to-r from-transparent via-ottoman-gold to-transparent;
+  }
+
+  /* Input Fields */
+  .input-ottoman {
+    @apply w-full px-4 py-3 bg-ottoman-black-lighter border-2
+           border-ottoman-gold/20 rounded-lg text-ottoman-cream
+           placeholder-ottoman-cream/50
+           focus:outline-none focus:border-ottoman-gold
+           transition-colors duration-300;
+  }
+
+  /* Ottoman Divider */
+  .divider-ottoman {
+    @apply h-px bg-gradient-to-r from-transparent via-ottoman-gold to-transparent my-8;
+  }
+
+  /* Premium Badge */
+  .badge-premium {
+    @apply inline-flex items-center px-3 py-1
+           bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light
+           text-ottoman-black text-xs font-bold uppercase rounded-full
+           shadow-gold-glow;
+  }
+
+  /* Price Display */
+  .price-ottoman {
+    @apply text-3xl font-bold text-ottoman-gold-light;
+  }
+
+  /* Navigation Link */
+  .nav-link {
+    @apply relative text-ottoman-cream hover:text-ottoman-gold
+           transition-colors duration-300 font-medium;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-ottoman-gold
+           transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-ottoman-black-lighter;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ottoman-gold/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ottoman-gold;
+  }
+}
+
+@layer utilities {
+  .text-shadow-gold {
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  }
+
+  .animate-float-slow {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-slower {
+    animation: float 8s ease-in-out infinite;
+  }
+}

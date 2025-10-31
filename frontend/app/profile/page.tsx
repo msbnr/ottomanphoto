@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import { authAPI } from '@/lib/api'
+import { cities } from '@/lib/cities'
 
 interface Address {
   _id: string
@@ -71,6 +72,9 @@ export default function ProfilePage() {
     isDefault: false,
   })
 
+  // Selected city's districts
+  const [selectedCityDistricts, setSelectedCityDistricts] = useState<string[]>([])
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login?redirect=/profile')
@@ -91,6 +95,17 @@ export default function ProfilePage() {
     fetchAddresses()
   }, [isAuthenticated, user])
 
+  // Update districts when city changes in address form
+  useEffect(() => {
+    const selectedCity = cities.find(c => c.name === addressFormData.city)
+    if (selectedCity) {
+      setSelectedCityDistricts(selectedCity.districts)
+    } else {
+      setSelectedCityDistricts([])
+      setAddressFormData(prev => ({ ...prev, state: '' }))
+    }
+  }, [addressFormData.city])
+
   const fetchAddresses = async () => {
     try {
       const response = await authAPI.getAddresses()
@@ -98,6 +113,21 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error fetching addresses:', error)
     }
+  }
+
+  const handleProfilePhoneChange = (value: string) => {
+    const numbersOnly = value.replace(/\D/g, '')
+    const limited = numbersOnly.slice(0, 11)
+    setProfileData({
+      ...profileData,
+      profile: { ...profileData.profile, phone: limited }
+    })
+  }
+
+  const handleAddressPhoneChange = (value: string) => {
+    const numbersOnly = value.replace(/\D/g, '')
+    const limited = numbersOnly.slice(0, 11)
+    setAddressFormData({ ...addressFormData, phone: limited })
   }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -153,11 +183,15 @@ export default function ProfilePage() {
     setMessage(null)
 
     try {
+      // Posta kodu oluştur (dummy - gerçekte PTT'den alınabilir)
+      const postalCode = addressFormData.postalCode || '00000'
+      const dataToSubmit = { ...addressFormData, postalCode }
+
       if (editingAddress) {
-        await authAPI.updateAddress(editingAddress._id, addressFormData)
+        await authAPI.updateAddress(editingAddress._id, dataToSubmit)
         setMessage({ type: 'success', text: 'Adres başarıyla güncellendi!' })
       } else {
-        await authAPI.addAddress(addressFormData)
+        await authAPI.addAddress(dataToSubmit)
         setMessage({ type: 'success', text: 'Adres başarıyla eklendi!' })
       }
 
@@ -396,18 +430,22 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                          Telefon
+                          Telefon (11 hane)
                         </label>
                         <input
                           type="tel"
                           className="input-ottoman"
                           value={profileData.profile.phone}
-                          onChange={(e) => setProfileData({
-                            ...profileData,
-                            profile: { ...profileData.profile, phone: e.target.value }
-                          })}
-                          placeholder="0555 123 45 67"
+                          onChange={(e) => handleProfilePhoneChange(e.target.value)}
+                          placeholder="05XXXXXXXXX"
+                          maxLength={11}
+                          pattern="[0-9]{11}"
                         />
+                        {profileData.profile.phone && (
+                          <p className="text-xs text-ottoman-cream/50 mt-1">
+                            {profileData.profile.phone.length}/11 rakam
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -614,32 +652,25 @@ export default function ProfilePage() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                              Telefon *
-                            </label>
-                            <input
-                              type="tel"
-                              className="input-ottoman"
-                              value={addressFormData.phone}
-                              onChange={(e) => setAddressFormData({ ...addressFormData, phone: e.target.value })}
-                              placeholder="0555 123 45 67"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                              Posta Kodu *
-                            </label>
-                            <input
-                              type="text"
-                              className="input-ottoman"
-                              value={addressFormData.postalCode}
-                              onChange={(e) => setAddressFormData({ ...addressFormData, postalCode: e.target.value })}
-                              required
-                            />
-                          </div>
+                        <div>
+                          <label className="block text-sm font-medium text-ottoman-cream mb-2">
+                            Telefon * (11 hane)
+                          </label>
+                          <input
+                            type="tel"
+                            className="input-ottoman"
+                            value={addressFormData.phone}
+                            onChange={(e) => handleAddressPhoneChange(e.target.value)}
+                            placeholder="05XXXXXXXXX"
+                            required
+                            maxLength={11}
+                            pattern="[0-9]{11}"
+                          />
+                          {addressFormData.phone && (
+                            <p className="text-xs text-ottoman-cream/50 mt-1">
+                              {addressFormData.phone.length}/11 rakam
+                            </p>
+                          )}
                         </div>
 
                         <div>
@@ -650,46 +681,50 @@ export default function ProfilePage() {
                             className="input-ottoman min-h-[80px]"
                             value={addressFormData.street}
                             onChange={(e) => setAddressFormData({ ...addressFormData, street: e.target.value })}
+                            placeholder="Mahalle, cadde, sokak, bina no, daire no"
                             required
                           />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                              İlçe/İl *
-                            </label>
-                            <input
-                              type="text"
-                              className="input-ottoman"
-                              value={addressFormData.state}
-                              onChange={(e) => setAddressFormData({ ...addressFormData, state: e.target.value })}
-                              required
-                            />
-                          </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-sm font-medium text-ottoman-cream mb-2">
                               Şehir *
                             </label>
-                            <input
-                              type="text"
+                            <select
                               className="input-ottoman"
                               value={addressFormData.city}
                               onChange={(e) => setAddressFormData({ ...addressFormData, city: e.target.value })}
                               required
-                            />
+                            >
+                              <option value="">Şehir Seçin</option>
+                              {cities.map((city) => (
+                                <option key={city.name} value={city.name}>
+                                  {city.name}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                              Ülke *
+                              İlçe *
                             </label>
-                            <input
-                              type="text"
+                            <select
                               className="input-ottoman"
-                              value={addressFormData.country}
-                              onChange={(e) => setAddressFormData({ ...addressFormData, country: e.target.value })}
+                              value={addressFormData.state}
+                              onChange={(e) => setAddressFormData({ ...addressFormData, state: e.target.value })}
                               required
-                            />
+                              disabled={!addressFormData.city}
+                            >
+                              <option value="">
+                                {addressFormData.city ? 'İlçe Seçin' : 'Önce şehir seçin'}
+                              </option>
+                              {selectedCityDistricts.map((district) => (
+                                <option key={district} value={district}>
+                                  {district}
+                                </option>
+                              ))}
+                            </select>
                           </div>
                         </div>
 
@@ -779,10 +814,10 @@ export default function ProfilePage() {
                             <p className="text-white mb-1">{address.fullName}</p>
                             <p className="text-sm text-ottoman-cream/70 mb-1">{address.phone}</p>
                             <p className="text-sm text-ottoman-cream/70">
-                              {address.street}, {address.state} / {address.city}
+                              {address.street}
                             </p>
                             <p className="text-sm text-ottoman-cream/70">
-                              {address.postalCode}, {address.country}
+                              {address.state} / {address.city}
                             </p>
                           </motion.div>
                         ))}

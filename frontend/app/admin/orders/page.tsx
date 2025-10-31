@@ -17,8 +17,10 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       const response = await orderAPI.getAll()
-      setOrders(response.data?.orders || [])
+      console.log('Orders response:', response.data)
+      setOrders(response.data.data?.orders || [])
     } catch (err: any) {
+      console.error('Orders error:', err)
       setError(err.response?.data?.message || 'Siparişler yüklenirken hata oluştu')
     } finally {
       setLoading(false)

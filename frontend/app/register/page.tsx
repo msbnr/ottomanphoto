@@ -149,12 +149,23 @@ export default function RegisterPage() {
                   <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type="tel"
-                    placeholder="05XX XXX XX XX"
+                    placeholder="05XXXXXXXXX"
                     className="input-ottoman pl-12"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) => {
+                      const numbersOnly = e.target.value.replace(/\D/g, '')
+                      const limited = numbersOnly.slice(0, 11)
+                      setFormData({ ...formData, phone: limited })
+                    }}
+                    maxLength={11}
+                    pattern="[0-9]{11}"
                   />
                 </div>
+                {formData.phone && (
+                  <p className="text-xs text-ottoman-cream/50 mt-1">
+                    {formData.phone.length}/11 rakam
+                  </p>
+                )}
               </div>
 
               {/* Password */}

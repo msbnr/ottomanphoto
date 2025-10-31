@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Image as ImageIcon, Video, X, Play, ChevronLeft, ChevronRight } from 'lucide-react'
 import { galleryAPI, albumAPI } from '@/lib/api'
+import { getImageUrl } from '@/lib/utils'
 
 interface Album {
   _id: string
@@ -147,7 +148,7 @@ export default function GalleryPage() {
     return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '/placeholder-video.jpg'
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000'
+  // baseUrl removed - using getImageUrl instead
 
   // Navigation functions for lightbox
   const goToPrevious = () => {
@@ -238,7 +239,7 @@ export default function GalleryPage() {
               >
                 {item.type === 'image' ? (
                   <img
-                    src={`${baseUrl}${item.imageUrl}`}
+                    src={getImageUrl(item.imageUrl)}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />
@@ -331,7 +332,7 @@ export default function GalleryPage() {
               >
                 {selectedItem.type === 'image' ? (
                   <img
-                    src={`${baseUrl}${selectedItem.imageUrl}`}
+                    src={getImageUrl(selectedItem.imageUrl)}
                     alt={selectedItem.title}
                     className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
                   />

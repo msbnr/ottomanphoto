@@ -23,6 +23,7 @@ import bannerRoutes from './routes/bannerRoutes';
 import galleryRoutes from './routes/galleryRoutes';
 import albumRoutes from './routes/albumRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import seedRoutes from './routes/seedRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -89,6 +90,7 @@ app.use('/api/banners', bannerRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/albums', albumRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/seed', seedRoutes);
 
 // Error handling
 app.use(notFound);

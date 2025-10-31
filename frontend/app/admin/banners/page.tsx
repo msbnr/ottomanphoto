@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, Eye, EyeOff, Image as ImageIcon, Crop } from 'lucid
 import axios from '@/lib/api'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
+import { getImageUrl } from '@/lib/utils'
 
 interface Banner {
   _id: string
@@ -41,9 +42,6 @@ export default function AdminBannersPage() {
   const [zoom, setZoom] = useState(1)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const [originalFileName, setOriginalFileName] = useState<string>('')
-
-  // Get base URL with fallback
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000'
 
   useEffect(() => {
     fetchBanners()
@@ -239,7 +237,7 @@ export default function AdminBannersPage() {
       order: banner.order,
       isActive: banner.isActive,
     })
-    setImagePreview(`${baseUrl}${banner.imageUrl}`)
+    setImagePreview(getImageUrl(banner.imageUrl))
     setShowModal(true)
   }
 
@@ -305,7 +303,7 @@ export default function AdminBannersPage() {
             >
               <div className="relative aspect-[16/9] mb-4 rounded-lg overflow-hidden bg-white/5">
                 <img
-                  src={`${baseUrl}${banner.imageUrl}`}
+                  src={getImageUrl(banner.imageUrl)}
                   alt={banner.title}
                   className="w-full h-full object-cover"
                 />

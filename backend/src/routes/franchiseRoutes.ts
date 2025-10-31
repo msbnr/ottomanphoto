@@ -36,4 +36,15 @@ router.patch(
   franchiseController.updateApplicationStatus
 );
 
+router.post(
+  '/:id/reply',
+  authenticate,
+  authorize('admin'),
+  validate([
+    body('replyMessage').notEmpty().withMessage('Reply message is required'),
+    body('status').isIn(['approved', 'rejected']).withMessage('Status must be approved or rejected'),
+  ]),
+  franchiseController.replyToApplication
+);
+
 export default router;

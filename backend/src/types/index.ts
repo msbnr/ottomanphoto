@@ -39,9 +39,12 @@ export interface IUser extends Document {
   addresses: Types.DocumentArray<IAddress>;
   isActive: boolean;
   isVerified: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
+  getResetPasswordToken(): string;
 }
 
 // Product Types

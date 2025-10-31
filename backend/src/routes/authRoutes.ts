@@ -78,6 +78,24 @@ router.put(
   authController.changePassword
 );
 
+// Forgot password (public)
+router.post(
+  '/forgot-password',
+  validate([
+    body('email').isEmail().withMessage('Valid email is required'),
+  ]),
+  authController.forgotPassword
+);
+
+// Reset password (public)
+router.post(
+  '/reset-password/:token',
+  validate([
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  ]),
+  authController.resetPassword
+);
+
 // Admin: Get all users
 router.get('/admin/users', adminAuth, async (req, res) => {
   try {

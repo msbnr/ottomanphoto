@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { FranchiseApplication } from '../models';
+import emailService from '../services/emailService';
 
 /**
  * Submit franchise application
@@ -128,6 +129,61 @@ export const updateApplicationStatus = async (req: Request, res: Response): Prom
     res.status(200).json({
       success: true,
       message: 'Application status updated successfully',
+      data: application,
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Reply to franchise application (Admin only)
+ */
+export const replyToApplication = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { replyMessage, status } = req.body;
+
+    const application = await FranchiseApplication.findById(id);
+
+    if (!application) {
+      res.status(404).json({ success: false, message: 'Application not found' });
+      return;
+    }
+
+    // Validate status
+    if (!['approved', 'rejected'].includes(status)) {
+      res.status(400).json({
+        success: false,
+        message: 'Status must be either "approved" or "rejected"',
+      });
+      return;
+    }
+
+    // Send reply email
+    const emailSent = await emailService.sendFranchiseReply(
+      application.contact.email,
+      application.fullName,
+      replyMessage,
+      status
+    );
+
+    if (!emailSent) {
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send email. Please try again.',
+      });
+      return;
+    }
+
+    // Update application status and notes
+    application.status = status;
+    application.notes = `Reply sent (${status}): ${replyMessage}`;
+    await application.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Reply sent successfully',
       data: application,
     });
   } catch (error: any) {

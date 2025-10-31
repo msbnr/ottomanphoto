@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Contact from '../models/Contact';
+import emailService from '../services/emailService';
 
 /**
  * Submit contact message
@@ -135,6 +136,51 @@ export const deleteContact = async (req: Request, res: Response): Promise<void> 
     res.status(200).json({
       success: true,
       message: 'Contact deleted successfully',
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Reply to contact message (Admin only)
+ */
+export const replyToContact = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { replyMessage } = req.body;
+
+    const contact = await Contact.findById(id);
+
+    if (!contact) {
+      res.status(404).json({ success: false, message: 'Contact not found' });
+      return;
+    }
+
+    // Send reply email
+    const emailSent = await emailService.sendContactReply(
+      contact.email,
+      contact.name,
+      replyMessage
+    );
+
+    if (!emailSent) {
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send email. Please try again.',
+      });
+      return;
+    }
+
+    // Update contact status to resolved
+    contact.status = 'resolved';
+    contact.notes = `Reply sent: ${replyMessage}`;
+    await contact.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Reply sent successfully',
+      data: contact,
     });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });

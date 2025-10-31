@@ -33,4 +33,12 @@ router.patch(
 
 router.delete('/:id', authenticate, authorize('admin'), contactController.deleteContact);
 
+router.post(
+  '/:id/reply',
+  authenticate,
+  authorize('admin'),
+  validate([body('replyMessage').notEmpty().withMessage('Reply message is required')]),
+  contactController.replyToContact
+);
+
 export default router;

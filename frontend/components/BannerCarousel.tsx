@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import axios from '@/lib/api'
+import { getImageUrl } from '@/lib/utils'
 
 interface Banner {
   _id: string
@@ -69,9 +70,6 @@ export default function BannerCarousel() {
 
   const currentBanner = banners[currentIndex]
 
-  // Get base URL with fallback
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000'
-
   const BannerContent = () => (
     <div className="relative w-full rounded-lg overflow-hidden bg-[#0A0A0A]">
       <AnimatePresence mode="wait">
@@ -86,7 +84,7 @@ export default function BannerCarousel() {
           {/* Image Section */}
           <div className="relative w-full md:w-[60%] aspect-[16/10] md:aspect-auto md:min-h-[400px]">
             <img
-              src={`${baseUrl}${currentBanner.imageUrl}`}
+              src={getImageUrl(currentBanner.imageUrl)}
               alt={currentBanner.title}
               className="w-full h-full object-cover"
             />

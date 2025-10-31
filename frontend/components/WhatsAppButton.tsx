@@ -11,13 +11,19 @@ export default function WhatsAppButton() {
     // Fetch WhatsApp number from settings
     const fetchWhatsAppNumber = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/settings');
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const response = await fetch(`${API_URL}/settings`);
         const data = await response.json();
         if (data.success && data.data.whatsappNumber) {
           setWhatsappNumber(data.data.whatsappNumber);
+        } else {
+          // Fallback to default number if no settings
+          setWhatsappNumber('+905551234567');
         }
       } catch (error) {
         console.error('WhatsApp numarası alınamadı:', error);
+        // Fallback to default number on error
+        setWhatsappNumber('+905551234567');
       }
     };
 

@@ -30,6 +30,9 @@ dotenv.config();
 // Create Express app
 const app: Application = express();
 
+// Trust proxy - Required for Railway/Heroku/etc
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },

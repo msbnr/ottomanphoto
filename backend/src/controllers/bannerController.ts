@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Banner from '../models/Banner';
 import fs from 'fs';
 import path from 'path';
+import storageService from '../services/storageService';
 
 // Get all banners (public)
 export const getAllBanners = async (req: Request, res: Response) => {
@@ -78,12 +79,21 @@ export const createBanner = async (req: Request, res: Response) => {
       });
     }
 
-    const imageUrl = `/uploads/banners/${req.file.filename}`;
+    // Upload to storage (R2 or local)
+    const uploadResult = await storageService.uploadFile(req.file, 'banners');
+
+    if (!uploadResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload image',
+        error: uploadResult.error,
+      });
+    }
 
     const banner = await Banner.create({
       title,
       description,
-      imageUrl,
+      imageUrl: uploadResult.url,
       link,
       order: order || 0,
       isActive: isActive !== undefined ? isActive : true,
@@ -95,14 +105,6 @@ export const createBanner = async (req: Request, res: Response) => {
       message: 'Banner created successfully',
     });
   } catch (error) {
-    // Delete uploaded file if banner creation fails
-    if (req.file) {
-      const filePath = path.join(__dirname, '../../uploads/banners', req.file.filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
-
     res.status(500).json({
       success: false,
       message: 'Error creating banner',
@@ -133,13 +135,21 @@ export const updateBanner = async (req: Request, res: Response) => {
 
     // Update image if new file uploaded
     if (req.file) {
-      // Delete old image
-      const oldImagePath = path.join(__dirname, '../../', banner.imageUrl);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
+      // Upload new image to storage
+      const uploadResult = await storageService.uploadFile(req.file, 'banners');
+
+      if (!uploadResult.success) {
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to upload new image',
+          error: uploadResult.error,
+        });
       }
 
-      banner.imageUrl = `/uploads/banners/${req.file.filename}`;
+      // Delete old image from storage
+      await storageService.deleteFile(banner.imageUrl);
+
+      banner.imageUrl = uploadResult.url;
     }
 
     await banner.save();
@@ -150,14 +160,6 @@ export const updateBanner = async (req: Request, res: Response) => {
       message: 'Banner updated successfully',
     });
   } catch (error) {
-    // Delete uploaded file if update fails
-    if (req.file) {
-      const filePath = path.join(__dirname, '../../uploads/banners', req.file.filename);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
-
     res.status(500).json({
       success: false,
       message: 'Error updating banner',
@@ -178,11 +180,8 @@ export const deleteBanner = async (req: Request, res: Response) => {
       });
     }
 
-    // Delete image file
-    const imagePath = path.join(__dirname, '../../', banner.imageUrl);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
+    // Delete image from storage (R2 or local)
+    await storageService.deleteFile(banner.imageUrl);
 
     await Banner.findByIdAndDelete(req.params.id);
 

@@ -1,66 +1,54 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, Search, Edit, Trash2, Eye } from 'lucide-react'
 import Link from 'next/link'
+import { productAPI } from '@/lib/api'
 
-// Mock data
-const products = [
-  {
-    id: '1',
-    name: 'Premium Lazer Yazıcı',
-    sku: 'YAZICI-001',
-    category: 'Elektronik',
-    stock: 50,
-    retailPrice: 5000,
-    dealerPrice: 4200,
-    status: 'active'
-  },
-  {
-    id: '2',
-    name: 'Dell Latitude 5420 Laptop',
-    sku: 'LAPTOP-001',
-    category: 'Elektronik',
-    stock: 15,
-    retailPrice: 25000,
-    dealerPrice: 22000,
-    status: 'active'
-  },
-  {
-    id: '3',
-    name: 'Ergonomik Ofis Koltuğu',
-    sku: 'KOLTUK-001',
-    category: 'Mobilya',
-    stock: 30,
-    retailPrice: 3500,
-    dealerPrice: 3000,
-    status: 'active'
-  },
-  {
-    id: '4',
-    name: 'A4 Fotokopi Kağıdı',
-    sku: 'KAGIT-001',
-    category: 'Ofis Malzemeleri',
-    stock: 200,
-    retailPrice: 450,
-    dealerPrice: 380,
-    status: 'active'
-  },
-  {
-    id: '5',
-    name: 'HP Toner Kartuş 85A',
-    sku: 'TONER-001',
-    category: 'Ofis Malzemeleri',
-    stock: 100,
-    retailPrice: 750,
-    dealerPrice: 650,
-    status: 'active'
-  },
-]
+interface Product {
+  _id: string
+  name: string
+  sku: string
+  category: string
+  stock: number
+  pricing: {
+    retail: number
+    dealer: number
+  }
+  isActive: boolean
+}
 
 export default function AdminProductsPage() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const response = await productAPI.getAll()
+      const data = response.data
+      // Backend returns { success: true, data: { products: [...] } }
+      if (data.data && Array.isArray(data.data.products)) {
+        setProducts(data.data.products)
+      } else if (Array.isArray(data.products)) {
+        setProducts(data.products)
+      } else if (Array.isArray(data)) {
+        setProducts(data)
+      } else {
+        setProducts([])
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      setProducts([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -71,13 +59,24 @@ export default function AdminProductsPage() {
     if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
       return
     }
-    // TODO: API call to delete product
-    alert(`Ürün ${productId} silindi`)
+    try {
+      await productAPI.delete(productId)
+      fetchProducts()
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Ürün silinirken hata oluştu')
+    }
   }
 
   const handlePreview = (productId: string) => {
-    // Open product detail page in new window
     window.open(`/products/${productId}`, '_blank')
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-ottoman-cream/60">Yükleniyor...</p>
+      </div>
+    )
   }
 
   return (
@@ -87,7 +86,7 @@ export default function AdminProductsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-serif font-bold mb-2">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+              <span className="text-white">
                 Ürün Yönetimi
               </span>
             </h1>
@@ -104,7 +103,7 @@ export default function AdminProductsPage() {
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
             <input
               type="text"
               placeholder="Ürün adı veya SKU ile ara..."
@@ -120,22 +119,22 @@ export default function AdminProductsPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-ottoman-gold/20">
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">SKU</th>
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">Ürün Adı</th>
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">Kategori</th>
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">Stok</th>
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">Perakende</th>
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">Bayi</th>
-                  <th className="text-left p-4 text-ottoman-gold font-semibold">Durum</th>
-                  <th className="text-right p-4 text-ottoman-gold font-semibold">İşlemler</th>
+                <tr className="border-b border-white/20">
+                  <th className="text-left p-4 text-white font-semibold">SKU</th>
+                  <th className="text-left p-4 text-white font-semibold">Ürün Adı</th>
+                  <th className="text-left p-4 text-white font-semibold">Kategori</th>
+                  <th className="text-left p-4 text-white font-semibold">Stok</th>
+                  <th className="text-left p-4 text-white font-semibold">Perakende</th>
+                  <th className="text-left p-4 text-white font-semibold">Bayi</th>
+                  <th className="text-left p-4 text-white font-semibold">Durum</th>
+                  <th className="text-right p-4 text-white font-semibold">İşlemler</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredProducts.map((product, index) => (
                   <motion.tr
-                    key={product.id}
-                    className="border-b border-ottoman-gold/10 hover:bg-ottoman-gold/5 transition-colors"
+                    key={product._id}
+                    className="border-b border-white/10 hover:bg-white/5 transition-colors"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
@@ -164,37 +163,41 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="p-4">
                       <span className="text-ottoman-cream">
-                        {product.retailPrice.toLocaleString('tr-TR')} ₺
+                        {product.pricing?.retail ? product.pricing.retail.toLocaleString('tr-TR') : '-'} ₺
                       </span>
                     </td>
                     <td className="p-4">
-                      <span className="text-ottoman-gold">
-                        {product.dealerPrice.toLocaleString('tr-TR')} ₺
+                      <span className="text-white">
+                        {product.pricing?.dealer ? product.pricing.dealer.toLocaleString('tr-TR') : '-'} ₺
                       </span>
                     </td>
                     <td className="p-4">
-                      <span className="px-3 py-1 bg-green-500/20 text-green-500 rounded-full text-xs font-semibold">
-                        Aktif
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        product.isActive
+                          ? 'bg-green-500/20 text-green-500'
+                          : 'bg-gray-500/20 text-gray-500'
+                      }`}>
+                        {product.isActive ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-end space-x-2">
                         <button
-                          onClick={() => handlePreview(product.id)}
-                          className="p-2 hover:bg-ottoman-gold/10 rounded-lg transition-colors"
+                          onClick={() => handlePreview(product._id)}
+                          className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                           title="Ürünü Önizle"
                         >
                           <Eye className="w-4 h-4 text-ottoman-cream/70" />
                         </button>
                         <Link
-                          href={`/admin/products/${product.id}`}
+                          href={`/admin/products/${product._id}`}
                           className="p-2 hover:bg-blue-500/10 rounded-lg transition-colors"
                           title="Ürünü Düzenle"
                         >
                           <Edit className="w-4 h-4 text-blue-500" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => handleDelete(product._id)}
                           className="p-2 hover:bg-red-500/10 rounded-lg transition-colors"
                           title="Ürünü Sil"
                         >
@@ -215,16 +218,16 @@ export default function AdminProductsPage() {
             Toplam {filteredProducts.length} ürün gösteriliyor
           </p>
           <div className="flex items-center space-x-2">
-            <button className="px-4 py-2 border border-ottoman-gold/20 rounded-lg text-ottoman-cream/70 hover:bg-ottoman-gold/10 transition-colors">
+            <button className="px-4 py-2 border border-white/20 rounded-lg text-ottoman-cream/70 hover:bg-white/10 transition-colors">
               Önceki
             </button>
-            <button className="px-4 py-2 bg-ottoman-gold text-ottoman-black rounded-lg font-semibold">
+            <button className="px-4 py-2 bg-white text-ottoman-black rounded-lg font-semibold">
               1
             </button>
-            <button className="px-4 py-2 border border-ottoman-gold/20 rounded-lg text-ottoman-cream/70 hover:bg-ottoman-gold/10 transition-colors">
+            <button className="px-4 py-2 border border-white/20 rounded-lg text-ottoman-cream/70 hover:bg-white/10 transition-colors">
               2
             </button>
-            <button className="px-4 py-2 border border-ottoman-gold/20 rounded-lg text-ottoman-cream/70 hover:bg-ottoman-gold/10 transition-colors">
+            <button className="px-4 py-2 border border-white/20 rounded-lg text-ottoman-cream/70 hover:bg-white/10 transition-colors">
               Sonraki
             </button>
           </div>

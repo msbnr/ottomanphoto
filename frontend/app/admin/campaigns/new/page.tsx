@@ -63,13 +63,13 @@ export default function NewCampaignPage() {
           <div>
             <Link
               href="/admin/campaigns"
-              className="inline-flex items-center text-ottoman-gold hover:text-ottoman-gold-light mb-4"
+              className="inline-flex items-center text-white hover:text-white-light mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Geri Dön
             </Link>
             <h1 className="text-3xl font-serif font-bold">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+              <span className="text-white">
                 Yeni Kampanya Oluştur
               </span>
             </h1>
@@ -81,7 +81,7 @@ export default function NewCampaignPage() {
           <div className="card-ottoman space-y-6">
             {/* Basic Info */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Temel Bilgiler
               </h3>
               <div className="space-y-4">
@@ -114,7 +114,7 @@ export default function NewCampaignPage() {
 
             {/* Campaign Type */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Kampanya Tipi *
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -123,8 +123,8 @@ export default function NewCampaignPage() {
                   onClick={() => setCampaignType('cart_discount')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     campaignType === 'cart_discount'
-                      ? 'border-ottoman-gold bg-ottoman-gold/10'
-                      : 'border-ottoman-gold/20 hover:border-ottoman-gold/40'
+                      ? 'border-white bg-white/10'
+                      : 'border-white/20 hover:border-white/40'
                   }`}
                 >
                   <div className="text-lg font-semibold text-ottoman-cream mb-1">
@@ -139,8 +139,8 @@ export default function NewCampaignPage() {
                   onClick={() => setCampaignType('free_shipping')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     campaignType === 'free_shipping'
-                      ? 'border-ottoman-gold bg-ottoman-gold/10'
-                      : 'border-ottoman-gold/20 hover:border-ottoman-gold/40'
+                      ? 'border-white bg-white/10'
+                      : 'border-white/20 hover:border-white/40'
                   }`}
                 >
                   <div className="text-lg font-semibold text-ottoman-cream mb-1">
@@ -155,8 +155,8 @@ export default function NewCampaignPage() {
                   onClick={() => setCampaignType('category_discount')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     campaignType === 'category_discount'
-                      ? 'border-ottoman-gold bg-ottoman-gold/10'
-                      : 'border-ottoman-gold/20 hover:border-ottoman-gold/40'
+                      ? 'border-white bg-white/10'
+                      : 'border-white/20 hover:border-white/40'
                   }`}
                 >
                   <div className="text-lg font-semibold text-ottoman-cream mb-1">
@@ -171,8 +171,8 @@ export default function NewCampaignPage() {
                   onClick={() => setCampaignType('buy_one_get_one')}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     campaignType === 'buy_one_get_one'
-                      ? 'border-ottoman-gold bg-ottoman-gold/10'
-                      : 'border-ottoman-gold/20 hover:border-ottoman-gold/40'
+                      ? 'border-white bg-white/10'
+                      : 'border-white/20 hover:border-white/40'
                   }`}
                 >
                   <div className="text-lg font-semibold text-ottoman-cream mb-1">
@@ -187,7 +187,7 @@ export default function NewCampaignPage() {
 
             {/* Campaign Specific Settings */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Kampanya Detayları
               </h3>
 
@@ -370,7 +370,7 @@ export default function NewCampaignPage() {
 
             {/* Date Range */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Kampanya Tarihleri
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -403,14 +403,14 @@ export default function NewCampaignPage() {
 
             {/* Target Audience */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Hedef Kitle
               </h3>
               <div className="space-y-3">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30"
+                    className="w-5 h-5 rounded border-2 border-white/30"
                     checked={formData.targetUserTypes.includes('all')}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -425,7 +425,7 @@ export default function NewCampaignPage() {
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30"
+                    className="w-5 h-5 rounded border-2 border-white/30"
                     checked={formData.targetUserTypes.includes('customer')}
                     disabled={formData.targetUserTypes.includes('all')}
                   />
@@ -434,7 +434,7 @@ export default function NewCampaignPage() {
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30"
+                    className="w-5 h-5 rounded border-2 border-white/30"
                     checked={formData.targetUserTypes.includes('dealer')}
                     disabled={formData.targetUserTypes.includes('all')}
                   />
@@ -445,14 +445,14 @@ export default function NewCampaignPage() {
 
             {/* Usage Limits */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Kullanım Limitleri
               </h3>
               <div className="space-y-4">
                 <label className="flex items-start space-x-3">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 mt-0.5"
+                    className="w-5 h-5 rounded border-2 border-white/30 mt-0.5"
                     checked={formData.useTotalLimit}
                     onChange={(e) => setFormData({ ...formData, useTotalLimit: e.target.checked })}
                   />
@@ -472,7 +472,7 @@ export default function NewCampaignPage() {
                 <label className="flex items-start space-x-3">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 mt-0.5"
+                    className="w-5 h-5 rounded border-2 border-white/30 mt-0.5"
                     checked={formData.usePerUserLimit}
                     onChange={(e) => setFormData({ ...formData, usePerUserLimit: e.target.checked })}
                   />

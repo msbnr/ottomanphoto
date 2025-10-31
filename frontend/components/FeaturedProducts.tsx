@@ -2,12 +2,15 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ShoppingCart, Eye, Star } from 'lucide-react'
+import { ShoppingCart, Eye, Star, Check } from 'lucide-react'
+import { useState } from 'react'
+import { useCartStore } from '@/store/cartStore'
 
 const products = [
   {
     id: '1',
     name: 'Premium Lazer Yazıcı',
+    sku: 'YAZICI-001',
     category: 'Elektronik',
     price: 5000,
     image: '/products/printer.jpg',
@@ -16,6 +19,7 @@ const products = [
   {
     id: '2',
     name: 'Dell Latitude 5420 Laptop',
+    sku: 'LAPTOP-001',
     category: 'Elektronik',
     price: 25000,
     image: '/products/laptop.jpg',
@@ -24,6 +28,7 @@ const products = [
   {
     id: '3',
     name: 'Ergonomik Ofis Koltuğu',
+    sku: 'KOLTUK-001',
     category: 'Mobilya',
     price: 3500,
     image: '/products/chair.jpg',
@@ -32,6 +37,7 @@ const products = [
   {
     id: '4',
     name: 'A4 Fotokopi Kağıdı',
+    sku: 'KAGIT-001',
     category: 'Ofis Malzemeleri',
     price: 450,
     image: '/products/paper.jpg',
@@ -40,6 +46,30 @@ const products = [
 ]
 
 export default function FeaturedProducts() {
+  const addToCart = useCartStore((state) => state.addItem)
+  const [addedProducts, setAddedProducts] = useState<Set<string>>(new Set())
+
+  const handleAddToCart = (product: typeof products[0], e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    addToCart({
+      id: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: product.price,
+    }, 1)
+
+    // Başarı animasyonunu göster
+    setAddedProducts(prev => new Set(prev).add(product.id))
+    setTimeout(() => {
+      setAddedProducts(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(product.id)
+        return newSet
+      })
+    }, 2000)
+  }
   return (
     <section className="py-20 bg-ottoman-black-light">
       <div className="container mx-auto px-4">
@@ -68,36 +98,47 @@ export default function FeaturedProducts() {
             >
               {/* Product Image */}
               <div className="relative h-48 bg-ottoman-black rounded-lg mb-4 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-ottoman-gold/20 to-ottoman-red/20 flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-ottoman-red/20 flex items-center justify-center">
                   <div className="text-6xl">📦</div>
                 </div>
                 <div className="absolute top-2 right-2">
                   <span className="badge-premium">Premium</span>
                 </div>
                 <div className="absolute inset-0 bg-ottoman-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-4">
-                  <Link href={`/products/${product.id}`} className="p-3 bg-ottoman-gold rounded-full hover:scale-110 transition-transform">
+                  <Link href={`/products/${product.id}`} className="p-3 bg-white rounded-full hover:scale-110 transition-transform">
                     <Eye className="w-5 h-5 text-ottoman-black" />
                   </Link>
-                  <button className="p-3 bg-ottoman-gold rounded-full hover:scale-110 transition-transform">
-                    <ShoppingCart className="w-5 h-5 text-ottoman-black" />
+                  <button
+                    onClick={(e) => handleAddToCart(product, e)}
+                    className="p-3 bg-white rounded-full hover:scale-110 transition-transform"
+                  >
+                    {addedProducts.has(product.id) ? (
+                      <Check className="w-5 h-5 text-ottoman-black" />
+                    ) : (
+                      <ShoppingCart className="w-5 h-5 text-ottoman-black" />
+                    )}
                   </button>
                 </div>
               </div>
 
               {/* Product Info */}
               <div>
-                <div className="text-xs text-ottoman-gold/70 mb-1">{product.category}</div>
-                <h3 className="text-lg font-semibold text-ottoman-cream mb-2 group-hover:text-ottoman-gold transition-colors">
+                <div className="text-xs text-white/70 mb-1">{product.category}</div>
+                <h3 className="text-lg font-semibold text-ottoman-cream mb-2 group-hover:text-white transition-colors">
                   {product.name}
                 </h3>
                 <div className="flex items-center mb-3">
-                  <Star className="w-4 h-4 text-ottoman-gold fill-ottoman-gold" />
+                  <Star className="w-4 h-4 text-white fill-white" />
                   <span className="text-sm text-ottoman-cream/70 ml-1">{product.rating}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="price-ottoman">{product.price.toLocaleString('tr-TR')} ₺</span>
-                  <button className="btn-ottoman-outline py-2 px-4 text-sm">
-                    Sepete Ekle
+                  <button
+                    onClick={(e) => handleAddToCart(product, e)}
+                    disabled={addedProducts.has(product.id)}
+                    className="btn-ottoman-outline py-2 px-4 text-sm"
+                  >
+                    {addedProducts.has(product.id) ? 'Eklendi!' : 'Sepete Ekle'}
                   </button>
                 </div>
               </div>

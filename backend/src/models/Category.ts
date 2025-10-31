@@ -41,7 +41,7 @@ const categorySchema = new Schema<ICategory>(
 );
 
 // Indexes
-categorySchema.index({ slug: 1 });
+// Note: slug already has a unique index from the schema definition
 categorySchema.index({ parent: 1 });
 categorySchema.index({ isActive: 1 });
 

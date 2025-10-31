@@ -28,12 +28,12 @@ export default function AboutPage() {
           >
             <div className="prose prose-invert max-w-none">
               <p className="text-lg text-ottoman-cream/80 leading-relaxed mb-4">
-                Ottoman Platform, Türkiye'nin önde gelen ofis ürünleri ve iş ekipmanları tedarikçisidir.
+                Ottoman Platform, Türkiye&apos;nin önde gelen ofis ürünleri ve iş ekipmanları tedarikçisidir.
                 2024 yılında kurulan şirketimiz, kaliteli ürünleri uygun fiyatlarla müşterilerimize ulaştırma
                 misyonuyla yola çıktı.
               </p>
               <p className="text-lg text-ottoman-cream/80 leading-relaxed">
-                Bugün 500'den fazla ürün çeşidi, 50'yi aşkın bayi ağı ve binlerce memnun müşterisiyle
+                Bugün 500&apos;den fazla ürün çeşidi, 50&apos;yi aşkın bayi ağı ve binlerce memnun müşterisiyle
                 sektörde güvenilir bir marka haline geldik. Müşteri memnuniyeti odaklı hizmet anlayışımız
                 ve rekabetçi fiyat politikamızla büyümeye devam ediyoruz.
               </p>
@@ -72,10 +72,10 @@ export default function AboutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <div className="w-16 h-16 mx-auto mb-4 bg-ottoman-gold/20 rounded-full flex items-center justify-center">
-                <value.icon className="w-8 h-8 text-ottoman-gold" />
+              <div className="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center">
+                <value.icon className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-ottoman-gold mb-2">{value.title}</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">{value.title}</h3>
               <p className="text-ottoman-cream/70">{value.description}</p>
             </motion.div>
           ))}
@@ -90,19 +90,19 @@ export default function AboutPage() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-ottoman-gold mb-2">500+</div>
+              <div className="text-4xl font-bold text-white mb-2">500+</div>
               <div className="text-ottoman-cream/70">Ürün Çeşidi</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-ottoman-gold mb-2">50+</div>
+              <div className="text-4xl font-bold text-white mb-2">50+</div>
               <div className="text-ottoman-cream/70">Bayi Ağı</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-ottoman-gold mb-2">1000+</div>
+              <div className="text-4xl font-bold text-white mb-2">1000+</div>
               <div className="text-ottoman-cream/70">Mutlu Müşteri</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-ottoman-gold mb-2">24/7</div>
+              <div className="text-4xl font-bold text-white mb-2">24/7</div>
               <div className="text-ottoman-cream/70">Destek</div>
             </div>
           </div>

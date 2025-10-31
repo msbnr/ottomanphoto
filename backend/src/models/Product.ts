@@ -111,7 +111,7 @@ const productSchema = new Schema<IProduct>(
 );
 
 // Indexes for performance
-productSchema.index({ sku: 1 });
+// Note: sku already has a unique index from the schema definition
 productSchema.index({ category: 1 });
 productSchema.index({ name: 'text', description: 'text' }); // Text search
 productSchema.index({ 'visibility.customer': 1 });

@@ -1,0 +1,87 @@
+ ❌ SUNUCUYA GÖNDERMEYİN
+
+  Genel:
+  - node_modules/ (her iki klasörde de)
+  - .git/
+  - .vscode/, .vs/, .idea/
+  - .DS_Store, Thumbs.db
+  - *.log dosyaları
+
+  Backend klasöründe:
+  - dist/ (sunucuda build edilecek)
+  - uploads/* (içerik varsa)
+  - .env (yerel ortam değişkenleri)
+  - package-lock.json veya yarn.lock (opsiyonel)
+
+  Frontend klasöründe:
+  - .next/ (sunucuda build edilecek)
+  - out/, build/
+  - .env.local, .env
+  - *.tsbuildinfo
+  - next-env.d.ts
+
+  ✅ SUNUCUYA GÖNDERİN
+
+  Kök dizin:
+  ottoman-platform/
+  ├── README.md (opsiyonel, dokümantasyon için)
+  ├── backend/
+  └── frontend/
+
+  Backend klasörü:
+  backend/
+  ├── src/                    # Tüm kaynak kodlar
+  ├── package.json            # Bağımlılıklar
+  ├── tsconfig.json          # TypeScript config
+  ├── .env.example           # Örnek env dosyası
+  ├── .eslintrc.json
+  ├── .prettierrc
+  ├── nodemon.json
+  └── uploads/.gitkeep       # Boş klasör oluşturmak için
+
+  Frontend klasörü:
+  frontend/
+  ├── app/                   # Next.js sayfaları
+  ├── components/            # React bileşenleri
+  ├── lib/                   # Utility fonksiyonlar
+  ├── store/                 # State management
+  ├── public/                # Statik dosyalar (logo.png vs)
+  ├── package.json
+  ├── next.config.js
+  ├── tailwind.config.ts
+  ├── tsconfig.json
+  ├── postcss.config.js
+  ├── .eslintrc.json
+  └── .env.local.example
+
+  📋 SUNUCUDA YAPILACAKLAR
+
+  1. Dosyaları yükledikten sonra:
+  # Backend için
+  cd backend
+  npm install
+  cp .env.example .env
+  # .env dosyasını düzenle (MongoDB, JWT_SECRET vs)
+  npm run build
+  npm start
+
+  # Frontend için
+  cd frontend
+  npm install
+  cp .env.local.example .env.local
+  # .env.local dosyasını düzenle (NEXT_PUBLIC_API_URL vs)
+  npm run build
+  npm start
+
+  2. uploads klasörünü oluştur:
+  mkdir -p backend/uploads/{products,banners,pages,albums,gallery}
+
+  3. Process Manager kullanın (PM2 önerilir):
+  npm install -g pm2
+  pm2 start backend/dist/server.js --name ottoman-backend
+  pm2 start "npm start" --name ottoman-frontend --cwd frontend/
+  pm2 save
+  pm2 startup
+
+  Dosyaları transfer için rsync veya scp kullanabilirsiniz:
+  rsync -av --exclude-from='.gitignore' ottoman-platform/ user@server:/path/to/app/

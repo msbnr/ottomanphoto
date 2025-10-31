@@ -39,11 +39,11 @@ export default function RegisterPage() {
           >
             {/* Header */}
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-serif font-bold text-ottoman-gold mb-2">
+              <h1 className="text-4xl font-serif font-bold text-white mb-2">
                 Kayıt Olun
               </h1>
               <p className="text-ottoman-cream/70">
-                Ottoman Platform'a katılın ve avantajlardan yararlanın
+                Ottoman Platform&apos;a katılın ve avantajlardan yararlanın
               </p>
             </div>
 
@@ -54,11 +54,11 @@ export default function RegisterPage() {
                 onClick={() => setUserType('customer')}
                 className={`p-6 rounded-lg border-2 transition-all ${
                   userType === 'customer'
-                    ? 'bg-ottoman-gold/10 border-ottoman-gold'
-                    : 'bg-ottoman-black-lighter border-ottoman-gold/20 hover:border-ottoman-gold/40'
+                    ? 'bg-white/10 border-white'
+                    : 'bg-ottoman-black-lighter border-white/20 hover:border-white/40'
                 }`}
               >
-                <User className="w-8 h-8 text-ottoman-gold mx-auto mb-2" />
+                <User className="w-8 h-8 text-white mx-auto mb-2" />
                 <h3 className="font-semibold text-ottoman-cream mb-1">Müşteri</h3>
                 <p className="text-sm text-ottoman-cream/70">Bireysel alışveriş</p>
               </button>
@@ -68,11 +68,11 @@ export default function RegisterPage() {
                 onClick={() => setUserType('dealer')}
                 className={`p-6 rounded-lg border-2 transition-all ${
                   userType === 'dealer'
-                    ? 'bg-ottoman-gold/10 border-ottoman-gold'
-                    : 'bg-ottoman-black-lighter border-ottoman-gold/20 hover:border-ottoman-gold/40'
+                    ? 'bg-white/10 border-white'
+                    : 'bg-ottoman-black-lighter border-white/20 hover:border-white/40'
                 }`}
               >
-                <Building className="w-8 h-8 text-ottoman-gold mx-auto mb-2" />
+                <Building className="w-8 h-8 text-white mx-auto mb-2" />
                 <h3 className="font-semibold text-ottoman-cream mb-1">Bayi</h3>
                 <p className="text-sm text-ottoman-cream/70">Toplu alım, özel fiyat</p>
               </button>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                   E-posta *
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type="email"
                     placeholder="ornek@email.com"
@@ -104,7 +104,7 @@ export default function RegisterPage() {
                   Şifre *
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
@@ -116,7 +116,7 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold hover:text-ottoman-gold-light"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-white-light"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -132,7 +132,7 @@ export default function RegisterPage() {
                   {userType === 'dealer' ? 'Yetkili Adı Soyadı' : 'Ad Soyad'} *
                 </label>
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type="text"
                     placeholder="Adınız Soyadınız"
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                   Telefon *
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type="tel"
                     placeholder="+90 5XX XXX XX XX"
@@ -170,7 +170,7 @@ export default function RegisterPage() {
                       Firma Adı *
                     </label>
                     <div className="relative">
-                      <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                      <Building className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                       <input
                         type="text"
                         placeholder="Firma Ünvanı"
@@ -196,9 +196,9 @@ export default function RegisterPage() {
                     />
                   </div>
 
-                  <div className="bg-ottoman-gold/10 border border-ottoman-gold/30 rounded-lg p-4">
+                  <div className="bg-white/10 border border-white/30 rounded-lg p-4">
                     <p className="text-sm text-ottoman-cream/80">
-                      <strong className="text-ottoman-gold">Bayi Avantajları:</strong>
+                      <strong className="text-white">Bayi Avantajları:</strong>
                       <br />• %10 - %24 arası özel fiyatlandırma
                       <br />• Özel bayi ürünlerine erişim
                       <br />• Toplu sipariş kolaylığı
@@ -213,25 +213,25 @@ export default function RegisterPage() {
                 <label className="flex items-start space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 border-2 border-ottoman-gold/30 rounded bg-ottoman-black-lighter mt-1"
+                    className="w-4 h-4 border-2 border-white/30 rounded bg-ottoman-black-lighter mt-1"
                     required
                   />
                   <span className="text-sm text-ottoman-cream/70">
-                    <Link href="/terms" className="text-ottoman-gold hover:text-ottoman-gold-light">
+                    <Link href="/terms" className="text-white hover:text-white-light">
                       Kullanım Şartları
                     </Link>
-                    'nı ve{' '}
-                    <Link href="/privacy" className="text-ottoman-gold hover:text-ottoman-gold-light">
+                    &apos;nı ve{' '}
+                    <Link href="/privacy" className="text-white hover:text-white-light">
                       Gizlilik Politikası
                     </Link>
-                    'nı okudum, kabul ediyorum.
+                    &apos;nı okudum, kabul ediyorum.
                   </span>
                 </label>
 
                 <label className="flex items-start space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 border-2 border-ottoman-gold/30 rounded bg-ottoman-black-lighter mt-1"
+                    className="w-4 h-4 border-2 border-white/30 rounded bg-ottoman-black-lighter mt-1"
                   />
                   <span className="text-sm text-ottoman-cream/70">
                     Kampanya ve duyurulardan haberdar olmak istiyorum.
@@ -263,7 +263,7 @@ export default function RegisterPage() {
             <div className="mt-6 text-center">
               <p className="text-ottoman-cream/70">
                 Zaten hesabınız var mı?{' '}
-                <Link href="/login" className="text-ottoman-gold hover:text-ottoman-gold-light font-semibold">
+                <Link href="/login" className="text-white hover:text-white-light font-semibold">
                   Giriş Yapın
                 </Link>
               </p>

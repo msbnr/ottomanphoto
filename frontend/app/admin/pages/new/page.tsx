@@ -86,13 +86,13 @@ export default function NewPagePage() {
           <div>
             <Link
               href="/admin/pages"
-              className="inline-flex items-center text-ottoman-gold hover:text-ottoman-gold-light mb-4"
+              className="inline-flex items-center text-white hover:text-white-light mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Geri Dön
             </Link>
             <h1 className="text-3xl font-serif font-bold">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+              <span className="text-white">
                 Yeni Sayfa Oluştur
               </span>
             </h1>
@@ -112,7 +112,7 @@ export default function NewPagePage() {
           <div className="card-ottoman space-y-6">
             {/* Basic Info */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Temel Bilgiler
               </h3>
               <div className="space-y-4">
@@ -196,14 +196,14 @@ export default function NewPagePage() {
 
             {/* Menu Settings */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Menü Ayarları
               </h3>
               <div className="space-y-4">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30"
+                    className="w-5 h-5 rounded border-2 border-white/30"
                     checked={formData.showInMenu}
                     onChange={(e) => setFormData({ ...formData, showInMenu: e.target.checked })}
                   />
@@ -237,13 +237,13 @@ export default function NewPagePage() {
 
             {/* Publishing */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Yayınlama
               </h3>
               <label className="flex items-center space-x-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="w-5 h-5 rounded border-2 border-ottoman-gold/30"
+                  className="w-5 h-5 rounded border-2 border-white/30"
                   checked={formData.isPublished}
                   onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
                 />

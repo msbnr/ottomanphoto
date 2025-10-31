@@ -3,8 +3,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFound } from './middleware/errorHandler';
+import { requestLogger, responseTime } from './middleware/requestLogger';
+import { seedPages } from './utils/seedPages';
+import { cleanupOldPages } from './utils/cleanupOldPages';
 
 // Import routes
 import authRoutes from './routes/authRoutes';
@@ -13,6 +17,12 @@ import orderRoutes from './routes/orderRoutes';
 import franchiseRoutes from './routes/franchiseRoutes';
 import campaignRoutes from './routes/campaignRoutes';
 import pageRoutes from './routes/pageRoutes';
+import contactRoutes from './routes/contactRoutes';
+import settingsRoutes from './routes/settingsRoutes';
+import bannerRoutes from './routes/bannerRoutes';
+import galleryRoutes from './routes/galleryRoutes';
+import albumRoutes from './routes/albumRoutes';
+import paymentRoutes from './routes/paymentRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -21,7 +31,10 @@ dotenv.config();
 const app: Application = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false, // Disable CSP for development
+}));
 
 // CORS configuration
 app.use(
@@ -40,9 +53,16 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
+// Request logging and response time
+app.use(responseTime);
+app.use(requestLogger);
+
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files (uploads)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -60,6 +80,12 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/franchise', franchiseRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/pages', pageRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/banners', bannerRoutes);
+app.use('/api/gallery', galleryRoutes);
+app.use('/api/albums', albumRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Error handling
 app.use(notFound);
@@ -72,6 +98,12 @@ const startServer = async () => {
   try {
     // Connect to database
     await connectDatabase();
+
+    // Cleanup old pages with outdated slugs
+    await cleanupOldPages();
+
+    // Seed default pages
+    await seedPages();
 
     // Start server
     app.listen(PORT, () => {

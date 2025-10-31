@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import {
   Users, Package, ShoppingCart, TrendingUp,
-  FileText, Settings, BarChart3, DollarSign
+  FileText, Settings, BarChart3, DollarSign, Image as ImageIcon, ImagePlus, Folder, CreditCard, Award, LineChart
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -34,7 +34,7 @@ const stats = [
     value: '89',
     change: '+15.3%',
     icon: Users,
-    color: 'text-ottoman-gold'
+    color: 'text-white'
   },
 ]
 
@@ -45,6 +45,20 @@ const quickActions = [
     icon: Package,
     href: '/admin/products',
     color: 'bg-blue-500/10 border-blue-500/20 hover:border-blue-500/40'
+  },
+  {
+    name: 'Banner Yönetimi',
+    description: 'Anasayfa banner\'larını yönet',
+    icon: ImageIcon,
+    href: '/admin/banners',
+    color: 'bg-pink-500/10 border-pink-500/20 hover:border-pink-500/40'
+  },
+  {
+    name: 'Galeri Yönetimi',
+    description: 'Fotoğraf, video ve albüm yönetimi',
+    icon: ImagePlus,
+    href: '/admin/gallery',
+    color: 'bg-indigo-500/10 border-indigo-500/20 hover:border-indigo-500/40'
   },
   {
     name: 'Sipariş Yönetimi',
@@ -65,13 +79,34 @@ const quickActions = [
     description: 'Başvuruları incele ve onayla',
     icon: FileText,
     href: '/admin/franchise',
-    color: 'bg-ottoman-gold/10 border-ottoman-gold/20 hover:border-ottoman-gold/40'
+    color: 'bg-white/10 border-white/20 hover:border-white/40'
   },
   {
-    name: 'Raporlar',
-    description: 'Satış ve performans raporları',
-    icon: BarChart3,
-    href: '/admin/reports',
+    name: 'Franchise Özellikleri',
+    description: 'Franchise avantajlarını yönet',
+    icon: Award,
+    href: '/admin/franchise-features',
+    color: 'bg-yellow-500/10 border-yellow-500/20 hover:border-yellow-500/40'
+  },
+  {
+    name: 'Franchise İstatistikleri',
+    description: 'Franchise sayısal verilerini yönet',
+    icon: LineChart,
+    href: '/admin/franchise-stats',
+    color: 'bg-teal-500/10 border-teal-500/20 hover:border-teal-500/40'
+  },
+  {
+    name: 'İçerik Yönetimi (CMS)',
+    description: 'Sayfa içeriklerini düzenle',
+    icon: FileText,
+    href: '/admin/cms',
+    color: 'bg-cyan-500/10 border-cyan-500/20 hover:border-cyan-500/40'
+  },
+  {
+    name: 'Sepette Bekleyen Ürünler',
+    description: 'Müşteri sepetlerini görüntüle',
+    icon: ShoppingCart,
+    href: '/admin/carts',
     color: 'bg-orange-500/10 border-orange-500/20 hover:border-orange-500/40'
   },
   {
@@ -80,6 +115,13 @@ const quickActions = [
     icon: Settings,
     href: '/admin/settings',
     color: 'bg-gray-500/10 border-gray-500/20 hover:border-gray-500/40'
+  },
+  {
+    name: 'Ödeme Yönetimi',
+    description: 'Ödeme ayarları ve entegrasyonları',
+    icon: CreditCard,
+    href: '/admin/payment-settings',
+    color: 'bg-emerald-500/10 border-emerald-500/20 hover:border-emerald-500/40'
   },
 ]
 
@@ -94,7 +136,7 @@ export default function AdminDashboard() {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-4xl font-serif font-bold mb-2">
-            <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+            <span className="text-white">
               Yönetim Paneli
             </span>
           </h1>
@@ -135,7 +177,7 @@ export default function AdminDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <h2 className="text-2xl font-semibold text-ottoman-gold mb-6">
+          <h2 className="text-2xl font-semibold text-white mb-6">
             Hızlı Erişim
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -153,7 +195,7 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-start space-x-4">
                     <div className="p-3 rounded-lg bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A]">
-                      <action.icon className="w-6 h-6 text-ottoman-gold" />
+                      <action.icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-ottoman-cream mb-1">
@@ -177,7 +219,7 @@ export default function AdminDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
         >
-          <h2 className="text-2xl font-semibold text-ottoman-gold mb-6">
+          <h2 className="text-2xl font-semibold text-white mb-6">
             Son Aktiviteler
           </h2>
           <div className="card-ottoman">
@@ -190,7 +232,7 @@ export default function AdminDashboard() {
               ].map((activity, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between py-3 border-b border-ottoman-gold/10 last:border-0"
+                  className="flex items-center justify-between py-3 border-b border-white/10 last:border-0"
                 >
                   <div>
                     <p className="text-ottoman-cream font-medium">{activity.action}</p>

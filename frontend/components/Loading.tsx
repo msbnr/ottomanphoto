@@ -29,7 +29,7 @@ export default function Loading({
       <div className={containerClass}>
         <div className="text-center">
           <svg
-            className={`animate-spin ${sizeClasses[size]} text-ottoman-gold mx-auto`}
+            className={`animate-spin ${sizeClasses[size]} text-white mx-auto`}
             viewBox="0 0 24 24"
           >
             <circle
@@ -66,7 +66,7 @@ export default function Loading({
                 key={i}
                 className={`${
                   size === 'sm' ? 'w-2 h-2' : size === 'md' ? 'w-3 h-3' : 'w-4 h-4'
-                } bg-ottoman-gold rounded-full`}
+                } bg-white rounded-full`}
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [1, 0.5, 1],
@@ -92,9 +92,9 @@ export default function Loading({
     return (
       <div className={containerClass}>
         <div className="w-full max-w-md">
-          <div className="h-2 bg-ottoman-gold/20 rounded-full overflow-hidden">
+          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light"
+              className="h-full bg-gradient-to-r from-white to-white-light"
               animate={{
                 x: ['-100%', '100%'],
               }}
@@ -132,9 +132,9 @@ export default function Loading({
             }}
           >
             <div className="relative w-full h-full">
-              <div className="absolute inset-0 bg-gradient-to-br from-ottoman-gold to-ottoman-red rounded-lg opacity-20 blur-xl" />
-              <div className="absolute inset-0 border-4 border-ottoman-gold rounded-lg" />
-              <div className="absolute inset-2 bg-gradient-to-br from-ottoman-gold/50 to-ottoman-red/50" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white to-ottoman-red rounded-lg opacity-20 blur-xl" />
+              <div className="absolute inset-0 border-4 border-white rounded-lg" />
+              <div className="absolute inset-2 bg-gradient-to-br from-white/50 to-ottoman-red/50" />
             </div>
           </motion.div>
           {text && (
@@ -177,16 +177,16 @@ export function PageSkeleton() {
       <div className="container mx-auto px-4">
         <div className="animate-pulse space-y-8">
           {/* Header skeleton */}
-          <div className="h-10 bg-ottoman-gold/10 rounded-lg w-1/3" />
-          <div className="h-6 bg-ottoman-gold/10 rounded-lg w-1/2" />
+          <div className="h-10 bg-white/10 rounded-lg w-1/3" />
+          <div className="h-6 bg-white/10 rounded-lg w-1/2" />
 
           {/* Content skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
               <div key={i} className="card-ottoman">
-                <div className="h-48 bg-ottoman-gold/10 rounded-lg mb-4" />
-                <div className="h-6 bg-ottoman-gold/10 rounded-lg mb-2" />
-                <div className="h-4 bg-ottoman-gold/10 rounded-lg w-2/3" />
+                <div className="h-48 bg-white/10 rounded-lg mb-4" />
+                <div className="h-6 bg-white/10 rounded-lg mb-2" />
+                <div className="h-4 bg-white/10 rounded-lg w-2/3" />
               </div>
             ))}
           </div>

@@ -12,12 +12,18 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    const { items, shippingAddress, notes } = req.body;
+    const { items, shippingAddress, paymentMethod, notes } = req.body;
 
     // Get user
     const user = await User.findById(req.user.userId);
     if (!user) {
       res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    // Validate payment method
+    if (paymentMethod && !['credit_card', 'bank_transfer', 'cash_on_delivery'].includes(paymentMethod)) {
+      res.status(400).json({ success: false, message: 'Invalid payment method' });
       return;
     }
 
@@ -63,6 +69,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       items: orderItems,
       totalAmount,
       shippingAddress,
+      paymentMethod: paymentMethod || 'cash_on_delivery',
       notes,
     });
 

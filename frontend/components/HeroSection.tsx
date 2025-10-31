@@ -6,36 +6,8 @@ import { ArrowRight, Star, Shield, TrendingUp } from 'lucide-react'
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background Patterns */}
-      <div className="absolute inset-0 opacity-20">
-        <motion.div
-          className="absolute top-20 left-10 w-64 h-64 border-2 border-ottoman-gold rounded-full"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-96 h-96 border-2 border-ottoman-red rounded-full"
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4 py-20 relative z-10">
+    <section className="relative flex items-center justify-center overflow-hidden">
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <motion.div
@@ -44,17 +16,17 @@ export default function HeroSection() {
             transition={{ duration: 0.8 }}
           >
             <motion.div
-              className="inline-flex items-center space-x-2 bg-ottoman-gold/10 border border-ottoman-gold/30 rounded-full px-4 py-2 mb-6"
+              className="inline-flex items-center space-x-2 bg-white/10 border border-white/30 rounded-full px-4 py-2 mb-6"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Star className="w-4 h-4 text-ottoman-gold fill-ottoman-gold" />
-              <span className="text-sm font-semibold text-ottoman-gold">Premium Kalite</span>
+              <Star className="w-4 h-4 text-white fill-white" />
+              <span className="text-sm font-semibold text-white">Premium Kalite</span>
             </motion.div>
 
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-ottoman-gold via-ottoman-gold-light to-ottoman-gold animate-shimmer">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white-light to-white animate-shimmer">
                 Ottoman
               </span>
               <br />
@@ -63,8 +35,8 @@ export default function HeroSection() {
 
             <p className="text-xl md:text-2xl text-ottoman-cream/80 mb-8 leading-relaxed">
               Tarihi değerleri modern iş dünyasıyla buluşturan,
-              <span className="text-ottoman-gold font-semibold"> kaliteli ofis ürünleri</span> ve
-              <span className="text-ottoman-gold font-semibold"> franchise çözümleri</span>
+              <span className="text-white font-semibold"> kaliteli ürünler</span> ve
+              <span className="text-white font-semibold"> franchise çözümleri</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -85,7 +57,7 @@ export default function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <div className="text-3xl font-bold text-ottoman-gold mb-1">500+</div>
+                <div className="text-3xl font-bold text-white mb-1">200+</div>
                 <div className="text-sm text-ottoman-cream/60">Ürün Çeşidi</div>
               </motion.div>
               <motion.div
@@ -94,7 +66,7 @@ export default function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <div className="text-3xl font-bold text-ottoman-gold mb-1">50+</div>
+                <div className="text-3xl font-bold text-white mb-1">10+</div>
                 <div className="text-sm text-ottoman-cream/60">Bayi Ağı</div>
               </motion.div>
               <motion.div
@@ -103,8 +75,8 @@ export default function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <div className="text-3xl font-bold text-ottoman-gold mb-1">24/7</div>
-                <div className="text-sm text-ottoman-cream/60">Destek</div>
+                <div className="text-3xl font-bold text-white mb-1">Eğitim</div>
+                <div className="text-sm text-ottoman-cream/60">ve Destek</div>
               </motion.div>
             </div>
           </motion.div>
@@ -120,10 +92,10 @@ export default function HeroSection() {
               className="card-ottoman hover:scale-105 transition-transform"
               whileHover={{ y: -10 }}
             >
-              <div className="w-12 h-12 bg-ottoman-gold/20 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="w-6 h-6 text-ottoman-gold" />
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-ottoman-gold mb-2">Güvenilir</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Güvenilir</h3>
               <p className="text-ottoman-cream/70 text-sm">
                 Tüm ürünlerde garanti ve satış sonrası destek
               </p>
@@ -136,9 +108,9 @@ export default function HeroSection() {
               <div className="w-12 h-12 bg-ottoman-red/20 rounded-lg flex items-center justify-center mb-4">
                 <TrendingUp className="w-6 h-6 text-ottoman-red-light" />
               </div>
-              <h3 className="text-xl font-semibold text-ottoman-red-light mb-2">Karlı</h3>
+              <h3 className="text-xl font-semibold text-ottoman-red-light mb-2">Kârlı</h3>
               <p className="text-ottoman-cream/70 text-sm">
-                5 seviyeli bayi fiyatlandırması ile yüksek kar marjı
+                Seviyeli bayi fiyatlandırması ile yüksek kar marjı
               </p>
             </motion.div>
 
@@ -146,12 +118,12 @@ export default function HeroSection() {
               className="card-ottoman hover:scale-105 transition-transform"
               whileHover={{ y: -10 }}
             >
-              <div className="w-12 h-12 bg-ottoman-gold/20 rounded-lg flex items-center justify-center mb-4">
-                <Star className="w-6 h-6 text-ottoman-gold fill-ottoman-gold" />
+              <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+                <Star className="w-6 h-6 text-white fill-white" />
               </div>
-              <h3 className="text-xl font-semibold text-ottoman-gold mb-2">Kaliteli</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">Kaliteli</h3>
               <p className="text-ottoman-cream/70 text-sm">
-                Seçilmiş markalar ve premium ürün kalitesi
+                Özel üretim ürünler, seçilmiş markalar ve premium ürün kalitesi
               </p>
             </motion.div>
 

@@ -52,8 +52,9 @@ const pageSchema = new Schema<IPage>(
     },
     createdBy: {
       type: String,
-      required: true,
+      required: false,
       ref: 'User',
+      default: 'system',
     },
     updatedBy: {
       type: String,
@@ -66,7 +67,7 @@ const pageSchema = new Schema<IPage>(
 );
 
 // Indexes
-pageSchema.index({ slug: 1 });
+// Note: slug already has a unique index from the schema definition
 pageSchema.index({ isPublished: 1 });
 pageSchema.index({ showInMenu: 1, menuOrder: 1 });
 

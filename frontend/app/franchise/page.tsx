@@ -1,42 +1,137 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Building, MapPin, Phone, Mail, Check, Send } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Building, MapPin, Phone, Mail, Check, Send, X } from 'lucide-react'
 import Image from 'next/image'
-
-const concepts = [
-  { id: 'concept1', name: 'Mini Market (50-100 m²)', investment: '₺150,000 - ₺250,000' },
-  { id: 'concept2', name: 'Standart Mağaza (100-200 m²)', investment: '₺250,000 - ₺400,000' },
-  { id: 'concept3', name: 'Büyük Mağaza (200+ m²)', investment: '₺400,000+' },
-]
+import { franchiseAPI, settingsAPI } from '@/lib/api'
+import { TURKEY_CITIES } from '@/lib/constants'
 
 export default function FranchisePage() {
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [concepts, setConcepts] = useState<any[]>([])
+  const [features, setFeatures] = useState<string[]>([])
+  const [stats, setStats] = useState<any[]>([])
+  const [showTermsModal, setShowTermsModal] = useState(false)
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     city: '',
-    country: 'Türkiye',
-    concept: 'concept1',
-    experience: '',
-    budget: '',
+    concept: '',
     notes: '',
     termsAccepted: false,
     privacyAccepted: false,
   })
 
+  useEffect(() => {
+    fetchConcepts()
+    fetchFeatures()
+    fetchStats()
+  }, [])
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showTermsModal || showPrivacyModal) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showTermsModal, showPrivacyModal])
+
+  const fetchConcepts = async () => {
+    try {
+      const response = await settingsAPI.getFranchiseConcepts()
+      if (response.data.data.concepts) {
+        setConcepts(response.data.data.concepts)
+        if (response.data.data.concepts.length > 0) {
+          setFormData(prev => ({ ...prev, concept: response.data.data.concepts[0].id }))
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching concepts:', error)
+    }
+  }
+
+  const fetchFeatures = async () => {
+    try {
+      const response = await settingsAPI.getFranchiseFeatures()
+      if (response.data.data.features) {
+        // Extract only titles for the simple list
+        const featureTitles = response.data.data.features.map((f: any) => f.title)
+        setFeatures(featureTitles)
+      }
+    } catch (error) {
+      console.error('Error fetching features:', error)
+      // Fallback to default features if API fails
+      setFeatures([
+    'Yerleşik marka gücü ve tanınırlık',
+    'Gelişmiş yazılım ile iş takibi',
+    'Alt bayi oluşturma imkanı',
+    'Fotoğrafçılık Eğitimi',
+    'Satış ve Pazarlama Eğitimi',
+    'Özel bayi fiyatlandırması',
+    'Düşük başlangıç maliyeti',
+    'Yüksek kar marjı',
+    'Geniş ürün yelpazesi (200+ ürün)',
+    'Rekabetçi fiyatlandırma',
+    'Düzenli kampanyalar',
+    'Kolay sipariş yönetimi',
+      ])
+    }
+  }
+
+  const fetchStats = async () => {
+    try {
+      const response = await settingsAPI.get()
+      if (response.data.data.franchiseStats) {
+        setStats(response.data.data.franchiseStats)
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+      // Fallback to default stats if API fails
+      setStats([
+        { id: 'stat1', label: 'Aktif Bayi', value: '50+', icon: 'Building', order: 1 },
+        { id: 'stat2', label: 'Bayi Memnuniyeti', value: '%95', icon: 'ThumbsUp', order: 2 },
+        { id: 'stat3', label: 'Ortalama Geri Dönüş', value: '3 Ay', icon: 'TrendingUp', order: 3 },
+        { id: 'stat4', label: 'Teknik Destek', value: '24/7', icon: 'Headphones', order: 4 },
+      ])
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '') // Sadece rakamlar
+    if (value.length <= 11) {
+      setFormData({ ...formData, phone: value })
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
-    // TODO: API call
-    setTimeout(() => {
+    // Telefon validasyonu
+    if (formData.phone.length !== 11) {
+      setError('Telefon numarası 11 haneli olmalıdır (5XXXXXXXXX)')
       setLoading(false)
+      return
+    }
+
+    try {
+      await franchiseAPI.apply(formData)
       setSubmitted(true)
-    }, 1500)
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Başvuru gönderilirken bir hata oluştu')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -50,7 +145,7 @@ export default function FranchisePage() {
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Check className="w-10 h-10 text-green-500" />
           </div>
-          <h2 className="text-3xl font-serif font-bold text-ottoman-gold mb-4">
+          <h2 className="text-3xl font-serif font-bold text-white mb-4">
             Başvurunuz Alındı!
           </h2>
           <p className="text-ottoman-cream/80 mb-6">
@@ -58,7 +153,7 @@ export default function FranchisePage() {
             sizinle iletişime geçeceğiz.
           </p>
           <p className="text-sm text-ottoman-cream/60 mb-8">
-            Ortalama değerlendirme süresi: <strong className="text-ottoman-gold">3-5 iş günü</strong>
+            Ortalama değerlendirme süresi: <strong className="text-white">3-5 iş günü</strong>
           </p>
           <button
             onClick={() => window.location.href = '/'}
@@ -90,7 +185,7 @@ export default function FranchisePage() {
             />
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-            <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+            <span className="text-white">
               Franchise Başvurusu
             </span>
           </h1>
@@ -99,6 +194,35 @@ export default function FranchisePage() {
             Kendi işinizin sahibi olun, güçlü bir marka ile başarıya ulaşın.
           </p>
         </motion.div>
+
+        {/* İstatistikler */}
+        {stats.length > 0 && (
+          <motion.div
+            className="mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.id}
+                  className="card-ottoman text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                >
+                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm md:text-base text-ottoman-cream/70">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {/* Left: Benefits */}
@@ -109,20 +233,11 @@ export default function FranchisePage() {
             transition={{ delay: 0.2 }}
           >
             <div className="card-ottoman sticky top-24">
-              <h3 className="text-2xl font-serif font-bold text-ottoman-gold mb-6">
-                Franchise Avantajları
+              <h3 className="text-2xl font-serif font-bold text-white mb-6">
+                Franchise İçeriği
               </h3>
               <ul className="space-y-4">
-                {[
-                  'Yerleşik marka gücü',
-                  'Kapsamlı eğitim programı',
-                  'Pazarlama desteği',
-                  'Özel bayi fiyatlandırması',
-                  'Düşük başlangıç maliyeti',
-                  'Yüksek kar marjı',
-                  '7/24 teknik destek',
-                  'Lokasyon analizi',
-                ].map((item, index) => (
+                {features.map((item, index) => (
                   <motion.li
                     key={index}
                     className="flex items-start space-x-3"
@@ -146,9 +261,16 @@ export default function FranchisePage() {
             transition={{ delay: 0.2 }}
           >
             <form onSubmit={handleSubmit} className="card-ottoman space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                  <p className="text-red-500 text-sm">{error}</p>
+                </div>
+              )}
+
               {/* Personal Info */}
               <div>
-                <h3 className="text-xl font-semibold text-ottoman-gold mb-4">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   Kişisel Bilgiler
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -169,7 +291,7 @@ export default function FranchisePage() {
                       E-posta *
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                       <input
                         type="email"
                         className="input-ottoman pl-12"
@@ -181,18 +303,23 @@ export default function FranchisePage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                      Telefon *
+                      Telefon * (11 hane)
                     </label>
                     <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                      <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                       <input
                         type="tel"
                         className="input-ottoman pl-12"
-                        placeholder="+90 5XX XXX XX XX"
+                        placeholder="05XXXXXXXXX (11 hane)"
                         value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        onChange={handlePhoneChange}
+                        maxLength={11}
+                        pattern="[0-9]{11}"
                         required
                       />
+                      <span className="text-xs text-ottoman-cream/50 mt-1 block">
+                        {formData.phone.length}/11 hane
+                      </span>
                     </div>
                   </div>
                   <div>
@@ -200,14 +327,20 @@ export default function FranchisePage() {
                       Şehir *
                     </label>
                     <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
-                      <input
-                        type="text"
-                        className="input-ottoman pl-12"
+                      <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5 pointer-events-none" />
+                      <select
+                        className="input-ottoman pl-12 appearance-none"
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         required
-                      />
+                      >
+                        <option value="">Şehir seçiniz...</option>
+                        {TURKEY_CITIES.map(city => (
+                          <option key={city} value={city}>
+                            {city}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -215,7 +348,7 @@ export default function FranchisePage() {
 
               {/* Business Info */}
               <div>
-                <h3 className="text-xl font-semibold text-ottoman-gold mb-4">
+                <h3 className="text-xl font-semibold text-white mb-4">
                   İş Bilgileri
                 </h3>
                 <div className="space-y-4">
@@ -227,36 +360,14 @@ export default function FranchisePage() {
                       className="input-ottoman"
                       value={formData.concept}
                       onChange={(e) => setFormData({ ...formData, concept: e.target.value })}
+                      required
                     >
                       {concepts.map(concept => (
                         <option key={concept.id} value={concept.id}>
-                          {concept.name} - {concept.investment}
+                          {concept.name}
                         </option>
                       ))}
                     </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                      İş Deneyiminiz
-                    </label>
-                    <textarea
-                      className="input-ottoman min-h-[80px]"
-                      placeholder="Daha önce iş deneyiminizi kısaca açıklayın..."
-                      value={formData.experience}
-                      onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                      Yatırım Bütçeniz
-                    </label>
-                    <input
-                      type="text"
-                      className="input-ottoman"
-                      placeholder="₺ 100,000 - ₺ 200,000"
-                      value={formData.budget}
-                      onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-ottoman-cream mb-2">
@@ -274,30 +385,50 @@ export default function FranchisePage() {
 
               {/* Terms */}
               <div className="space-y-3">
-                <label className="flex items-start space-x-3 cursor-pointer">
+                <div className="flex items-start space-x-3">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 bg-ottoman-black-lighter mt-1"
+                    className="w-5 h-5 rounded border-2 border-white/30 bg-ottoman-black-lighter mt-1 cursor-pointer"
                     checked={formData.termsAccepted}
                     onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
                     required
                   />
                   <span className="text-sm text-ottoman-cream/80">
-                    <strong className="text-ottoman-gold">Kullanım Şartları</strong>'nı okudum ve kabul ediyorum. *
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setShowTermsModal(true)
+                      }}
+                      className="text-white font-bold hover:text-ottoman-gold transition-colors underline"
+                    >
+                      Kullanım Şartları
+                    </button>
+                    &apos;nı okudum ve kabul ediyorum. *
                   </span>
-                </label>
-                <label className="flex items-start space-x-3 cursor-pointer">
+                </div>
+                <div className="flex items-start space-x-3">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 bg-ottoman-black-lighter mt-1"
+                    className="w-5 h-5 rounded border-2 border-white/30 bg-ottoman-black-lighter mt-1 cursor-pointer"
                     checked={formData.privacyAccepted}
                     onChange={(e) => setFormData({ ...formData, privacyAccepted: e.target.checked })}
                     required
                   />
                   <span className="text-sm text-ottoman-cream/80">
-                    <strong className="text-ottoman-gold">Gizlilik Politikası</strong>'nı okudum ve kabul ediyorum. *
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setShowPrivacyModal(true)
+                      }}
+                      className="text-white font-bold hover:text-ottoman-gold transition-colors underline"
+                    >
+                      Gizlilik Politikası
+                    </button>
+                    &apos;nı okudum ve kabul ediyorum. *
                   </span>
-                </label>
+                </div>
               </div>
 
               {/* Submit */}
@@ -325,6 +456,180 @@ export default function FranchisePage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Terms Modal */}
+      <AnimatePresence>
+        {showTermsModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowTermsModal(false)}
+          >
+            <motion.div
+              className="bg-[#0A0A0A] border border-white/10 rounded-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-[#0A0A0A] border-b border-white/10 p-6 flex items-center justify-between">
+                <h2 className="text-2xl font-serif font-bold text-white">Kullanım Şartları</h2>
+                <button
+                  onClick={() => setShowTermsModal(false)}
+                  className="text-white hover:text-ottoman-gold transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="p-6 space-y-4 text-ottoman-cream/90">
+                <h3 className="text-xl font-semibold text-white">1. Genel Hükümler</h3>
+                <p>
+                  Bu Kullanım Şartları, Ottoman Platform franchise başvuru sistemini kullanan tüm kullanıcılar için geçerlidir.
+                  Sistemi kullanarak bu şartları kabul etmiş sayılırsınız.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">2. Franchise Başvurusu</h3>
+                <p>
+                  Franchise başvurusunda bulunarak, sağladığınız bilgilerin doğru ve güncel olduğunu teyit etmiş olursunuz.
+                  Yanlış veya yanıltıcı bilgi vermek başvurunuzun reddedilmesine neden olabilir.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">3. Değerlendirme Süreci</h3>
+                <p>
+                  Başvurunuz alındıktan sonra değerlendirme süreci başlar. Bu süreç ortalama 3-5 iş günü sürmektedir.
+                  Başvurunuzun kabul veya reddi konusunda size e-posta yoluyla bilgi verilecektir.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">4. Gizlilik ve Veri Koruma</h3>
+                <p>
+                  Başvuru sürecinde paylaştığınız tüm bilgiler gizli tutulacak ve sadece franchise değerlendirmesi için kullanılacaktır.
+                  Bilgileriniz üçüncü şahıslarla paylaşılmayacaktır.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">5. Sorumluluklar</h3>
+                <p>
+                  Ottoman Platform, başvuruların kabul veya reddi konusunda tam yetkiye sahiptir.
+                  Ret kararları için herhangi bir gerekçe sunma yükümlülüğü bulunmamaktadır.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">6. Değişiklik Hakkı</h3>
+                <p>
+                  Ottoman Platform, bu kullanım şartlarını önceden haber vermeksizin değiştirme hakkını saklı tutar.
+                  Güncel şartlar her zaman bu sayfada yayınlanacaktır.
+                </p>
+              </div>
+              <div className="sticky bottom-0 bg-[#0A0A0A] border-t border-white/10 p-6">
+                <button
+                  onClick={() => setShowTermsModal(false)}
+                  className="btn-ottoman w-full"
+                >
+                  Kapat
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Privacy Policy Modal */}
+      <AnimatePresence>
+        {showPrivacyModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999] p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowPrivacyModal(false)}
+          >
+            <motion.div
+              className="bg-[#0A0A0A] border border-white/10 rounded-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-[#0A0A0A] border-b border-white/10 p-6 flex items-center justify-between">
+                <h2 className="text-2xl font-serif font-bold text-white">Gizlilik Politikası</h2>
+                <button
+                  onClick={() => setShowPrivacyModal(false)}
+                  className="text-white hover:text-ottoman-gold transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              <div className="p-6 space-y-4 text-ottoman-cream/90">
+                <h3 className="text-xl font-semibold text-white">1. Toplanan Bilgiler</h3>
+                <p>
+                  Franchise başvuru sürecinde aşağıdaki bilgiler toplanmaktadır:
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>Ad Soyad</li>
+                  <li>E-posta adresi</li>
+                  <li>Telefon numarası</li>
+                  <li>Şehir bilgisi</li>
+                  <li>İlgilendiğiniz franchise konsepti</li>
+                  <li>Ek notlar (opsiyonel)</li>
+                </ul>
+
+                <h3 className="text-xl font-semibold text-white">2. Bilgilerin Kullanımı</h3>
+                <p>
+                  Toplanan bilgiler yalnızca aşağıdaki amaçlar için kullanılmaktadır:
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>Franchise başvurunuzun değerlendirilmesi</li>
+                  <li>Sizinle iletişime geçilmesi</li>
+                  <li>Franchise sürecinin yönetimi</li>
+                  <li>İstatistiksel analizler (anonim olarak)</li>
+                </ul>
+
+                <h3 className="text-xl font-semibold text-white">3. Bilgi Güvenliği</h3>
+                <p>
+                  Kişisel bilgileriniz, endüstri standartlarında güvenlik önlemleri ile korunmaktadır.
+                  Verileriniz şifrelenmiş bağlantılar üzerinden iletilir ve güvenli sunucularda saklanır.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">4. Üçüncü Taraf Paylaşımı</h3>
+                <p>
+                  Kişisel bilgileriniz, yasal zorunluluklar dışında üçüncü taraflarla paylaşılmaz.
+                  Franchise değerlendirme sürecinde sadece yetkili Ottoman Platform çalışanları bilgilerinize erişebilir.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">5. Çerezler</h3>
+                <p>
+                  Web sitemiz, kullanıcı deneyimini iyileştirmek için çerezler kullanmaktadır.
+                  Çerezleri tarayıcı ayarlarınızdan yönetebilirsiniz.
+                </p>
+
+                <h3 className="text-xl font-semibold text-white">6. Haklarınız</h3>
+                <p>
+                  KVKK kapsamında, kişisel verileriniz hakkında aşağıdaki haklara sahipsiniz:
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-4">
+                  <li>Bilgilerinize erişim hakkı</li>
+                  <li>Düzeltme hakkı</li>
+                  <li>Silme hakkı</li>
+                  <li>İşleme itiraz hakkı</li>
+                </ul>
+
+                <h3 className="text-xl font-semibold text-white">7. İletişim</h3>
+                <p>
+                  Gizlilik politikamız hakkında sorularınız için info@ottoman.com adresinden bize ulaşabilirsiniz.
+                </p>
+              </div>
+              <div className="sticky bottom-0 bg-[#0A0A0A] border-t border-white/10 p-6">
+                <button
+                  onClick={() => setShowPrivacyModal(false)}
+                  className="btn-ottoman w-full"
+                >
+                  Kapat
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

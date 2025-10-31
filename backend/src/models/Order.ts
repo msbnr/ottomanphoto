@@ -50,6 +50,27 @@ const orderSchema = new Schema<IOrder>(
       enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
     },
+    paymentMethod: {
+      type: String,
+      enum: ['credit_card', 'bank_transfer', 'cash_on_delivery'],
+      default: 'cash_on_delivery',
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed', 'refunded'],
+      default: 'pending',
+    },
+    paymentProvider: {
+      type: String,
+      enum: ['paytr', 'iyzico', 'stripe', 'cash'],
+      default: 'cash',
+    },
+    paymentTransactionId: {
+      type: String,
+    },
+    paymentToken: {
+      type: String,
+    },
     shippingAddress: {
       fullName: {
         type: String,

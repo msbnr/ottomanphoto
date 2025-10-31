@@ -1,4 +1,4 @@
-import { IProduct, IUser, UserType, DealerTier } from '../types';
+import { IProduct, IUser } from '../types';
 
 /**
  * Get the appropriate price for a product based on user type and dealer tier

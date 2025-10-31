@@ -1,8 +1,21 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // User Types
 export type UserType = 'customer' | 'dealer' | 'admin' | 'franchise' | 'supplier';
 export type DealerTier = 'small' | 'medium' | 'large' | 'main_dealer';
+
+export interface IAddress {
+  _id?: Types.ObjectId;
+  title: string;
+  fullName: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode: string;
+  isDefault: boolean;
+}
 
 export interface IUser extends Document {
   email: string;
@@ -23,6 +36,7 @@ export interface IUser extends Document {
       postalCode: string;
     };
   };
+  addresses: Types.DocumentArray<IAddress>;
   isActive: boolean;
   isVerified: boolean;
   createdAt: Date;
@@ -75,6 +89,8 @@ export interface IProduct extends Document {
 
 // Order Types
 export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+export type PaymentMethod = 'credit_card' | 'bank_transfer' | 'cash_on_delivery';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
 export interface IOrderItem {
   productId: string;
@@ -90,6 +106,11 @@ export interface IOrder extends Document {
   items: IOrderItem[];
   totalAmount: number;
   status: OrderStatus;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paymentProvider?: string;
+  paymentTransactionId?: string;
+  paymentToken?: string;
   shippingAddress: {
     fullName: string;
     phone: string;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Page from '../models/Page';
-import { auth, adminAuth } from '../middleware/auth';
+import { adminAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -100,7 +100,7 @@ router.post('/admin', adminAuth, async (req, res) => {
   try {
     const page = new Page({
       ...req.body,
-      createdBy: req.user._id,
+      createdBy: req.user!.userId,
     });
 
     await page.save();
@@ -120,7 +120,7 @@ router.put('/admin/:id', adminAuth, async (req, res) => {
       req.params.id,
       {
         ...req.body,
-        updatedBy: req.user._id,
+        updatedBy: req.user!.userId,
       },
       { new: true, runValidators: true }
     );
@@ -163,7 +163,7 @@ router.patch('/admin/:id/toggle', adminAuth, async (req, res) => {
     }
 
     page.isPublished = !page.isPublished;
-    page.updatedBy = req.user._id;
+    page.updatedBy = req.user!.userId as any;
     await page.save();
 
     res.json(page);

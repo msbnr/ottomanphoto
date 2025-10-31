@@ -53,7 +53,7 @@ export default function AdminReportsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-serif font-bold mb-2">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+              <span className="text-white">
                 Raporlar ve Analitik
               </span>
             </h1>
@@ -111,10 +111,10 @@ export default function AdminReportsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="w-12 h-12 bg-ottoman-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <DollarSign className="w-6 h-6 text-ottoman-gold" />
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <DollarSign className="w-6 h-6 text-white" />
             </div>
-            <div className="text-3xl font-bold text-ottoman-gold mb-2">
+            <div className="text-3xl font-bold text-white mb-2">
               {stats.totalSales.toLocaleString('tr-TR')} ₺
             </div>
             <div className="text-sm text-ottoman-cream/70">Toplam Satış</div>
@@ -173,8 +173,8 @@ export default function AdminReportsPage() {
               onClick={() => setReportType('sales')}
               className={`px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
                 reportType === 'sales'
-                  ? 'bg-ottoman-gold text-ottoman-black'
-                  : 'bg-ottoman-gold/10 text-ottoman-cream hover:bg-ottoman-gold/20'
+                  ? 'bg-white text-ottoman-black'
+                  : 'bg-white/10 text-ottoman-cream hover:bg-white/20'
               }`}
             >
               Satış Raporu
@@ -183,8 +183,8 @@ export default function AdminReportsPage() {
               onClick={() => setReportType('products')}
               className={`px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
                 reportType === 'products'
-                  ? 'bg-ottoman-gold text-ottoman-black'
-                  : 'bg-ottoman-gold/10 text-ottoman-cream hover:bg-ottoman-gold/20'
+                  ? 'bg-white text-ottoman-black'
+                  : 'bg-white/10 text-ottoman-cream hover:bg-white/20'
               }`}
             >
               En Çok Satanlar
@@ -193,8 +193,8 @@ export default function AdminReportsPage() {
               onClick={() => setReportType('customers')}
               className={`px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
                 reportType === 'customers'
-                  ? 'bg-ottoman-gold text-ottoman-black'
-                  : 'bg-ottoman-gold/10 text-ottoman-cream hover:bg-ottoman-gold/20'
+                  ? 'bg-white text-ottoman-black'
+                  : 'bg-white/10 text-ottoman-cream hover:bg-white/20'
               }`}
             >
               Değerli Müşteriler
@@ -203,8 +203,8 @@ export default function AdminReportsPage() {
               onClick={() => setReportType('carts')}
               className={`px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap ${
                 reportType === 'carts'
-                  ? 'bg-ottoman-gold text-ottoman-black'
-                  : 'bg-ottoman-gold/10 text-ottoman-cream hover:bg-ottoman-gold/20'
+                  ? 'bg-white text-ottoman-black'
+                  : 'bg-white/10 text-ottoman-cream hover:bg-white/20'
               }`}
             >
               Sepet Takibi
@@ -216,7 +216,7 @@ export default function AdminReportsPage() {
         {reportType === 'products' && (
           <div className="card-ottoman">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-serif font-bold text-ottoman-gold">
+              <h2 className="text-2xl font-serif font-bold text-white">
                 En Çok Satan Ürünler
               </h2>
               <button
@@ -230,18 +230,18 @@ export default function AdminReportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-ottoman-gold/20">
-                    <th className="text-left p-4 text-ottoman-gold font-semibold">Sıra</th>
-                    <th className="text-left p-4 text-ottoman-gold font-semibold">Ürün Adı</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Satış Adedi</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Toplam Ciro</th>
+                  <tr className="border-b border-white/20">
+                    <th className="text-left p-4 text-white font-semibold">Sıra</th>
+                    <th className="text-left p-4 text-white font-semibold">Ürün Adı</th>
+                    <th className="text-right p-4 text-white font-semibold">Satış Adedi</th>
+                    <th className="text-right p-4 text-white font-semibold">Toplam Ciro</th>
                   </tr>
                 </thead>
                 <tbody>
                   {stats.topProducts.map((product, index) => (
-                    <tr key={product.id} className="border-b border-ottoman-gold/10 hover:bg-ottoman-gold/5">
+                    <tr key={product.id} className="border-b border-white/10 hover:bg-white/5">
                       <td className="p-4">
-                        <span className="text-2xl font-bold text-ottoman-gold/50">
+                        <span className="text-2xl font-bold text-white/50">
                           #{index + 1}
                         </span>
                       </td>
@@ -252,7 +252,7 @@ export default function AdminReportsPage() {
                         <span className="text-ottoman-cream">{product.sold} adet</span>
                       </td>
                       <td className="p-4 text-right">
-                        <span className="text-ottoman-gold font-semibold">
+                        <span className="text-white font-semibold">
                           {product.revenue.toLocaleString('tr-TR')} ₺
                         </span>
                       </td>
@@ -268,7 +268,7 @@ export default function AdminReportsPage() {
         {reportType === 'customers' && (
           <div className="card-ottoman">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-serif font-bold text-ottoman-gold">
+              <h2 className="text-2xl font-serif font-bold text-white">
                 En Değerli Müşteriler
               </h2>
               <button
@@ -282,18 +282,18 @@ export default function AdminReportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-ottoman-gold/20">
-                    <th className="text-left p-4 text-ottoman-gold font-semibold">Sıra</th>
-                    <th className="text-left p-4 text-ottoman-gold font-semibold">Müşteri</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Sipariş Sayısı</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Toplam Harcama</th>
+                  <tr className="border-b border-white/20">
+                    <th className="text-left p-4 text-white font-semibold">Sıra</th>
+                    <th className="text-left p-4 text-white font-semibold">Müşteri</th>
+                    <th className="text-right p-4 text-white font-semibold">Sipariş Sayısı</th>
+                    <th className="text-right p-4 text-white font-semibold">Toplam Harcama</th>
                   </tr>
                 </thead>
                 <tbody>
                   {stats.topCustomers.map((customer, index) => (
-                    <tr key={customer.id} className="border-b border-ottoman-gold/10 hover:bg-ottoman-gold/5">
+                    <tr key={customer.id} className="border-b border-white/10 hover:bg-white/5">
                       <td className="p-4">
-                        <span className="text-2xl font-bold text-ottoman-gold/50">
+                        <span className="text-2xl font-bold text-white/50">
                           #{index + 1}
                         </span>
                       </td>
@@ -307,7 +307,7 @@ export default function AdminReportsPage() {
                         <span className="text-ottoman-cream">{customer.orders} sipariş</span>
                       </td>
                       <td className="p-4 text-right">
-                        <span className="text-ottoman-gold font-semibold">
+                        <span className="text-white font-semibold">
                           {customer.spent.toLocaleString('tr-TR')} ₺
                         </span>
                       </td>
@@ -323,7 +323,7 @@ export default function AdminReportsPage() {
         {reportType === 'carts' && (
           <div className="card-ottoman">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-serif font-bold text-ottoman-gold">
+              <h2 className="text-2xl font-serif font-bold text-white">
                 Sepet Aktivitesi
               </h2>
               <button
@@ -340,16 +340,16 @@ export default function AdminReportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-ottoman-gold/20">
-                    <th className="text-left p-4 text-ottoman-gold font-semibold">Kullanıcı</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Ürün Sayısı</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Sepet Tutarı</th>
-                    <th className="text-right p-4 text-ottoman-gold font-semibold">Eklenme Tarihi</th>
+                  <tr className="border-b border-white/20">
+                    <th className="text-left p-4 text-white font-semibold">Kullanıcı</th>
+                    <th className="text-right p-4 text-white font-semibold">Ürün Sayısı</th>
+                    <th className="text-right p-4 text-white font-semibold">Sepet Tutarı</th>
+                    <th className="text-right p-4 text-white font-semibold">Eklenme Tarihi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {stats.cartActivity.map((cart) => (
-                    <tr key={cart.userId} className="border-b border-ottoman-gold/10 hover:bg-ottoman-gold/5">
+                    <tr key={cart.userId} className="border-b border-white/10 hover:bg-white/5">
                       <td className="p-4">
                         <span className="text-ottoman-cream font-medium">{cart.userName}</span>
                       </td>
@@ -357,7 +357,7 @@ export default function AdminReportsPage() {
                         <span className="text-ottoman-cream">{cart.items} ürün</span>
                       </td>
                       <td className="p-4 text-right">
-                        <span className="text-ottoman-gold font-semibold">
+                        <span className="text-white font-semibold">
                           {cart.total.toLocaleString('tr-TR')} ₺
                         </span>
                       </td>

@@ -90,7 +90,7 @@ export default function AdminCampaignsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-serif font-bold mb-2">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+              <span className="text-white">
                 Kampanya Yönetimi
               </span>
             </h1>
@@ -107,7 +107,7 @@ export default function AdminCampaignsPage() {
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
             <input
               type="text"
               placeholder="Kampanya adı ile ara..."
@@ -134,8 +134,8 @@ export default function AdminCampaignsPage() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-ottoman-gold/20 rounded-lg flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-ottoman-gold" />
+                    <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-ottoman-cream mb-1">
@@ -163,7 +163,7 @@ export default function AdminCampaignsPage() {
                   {campaign.description}
                 </p>
 
-                <div className="flex items-center justify-between text-sm mb-4 pb-4 border-b border-ottoman-gold/10">
+                <div className="flex items-center justify-between text-sm mb-4 pb-4 border-b border-white/10">
                   <div className="text-ottoman-cream/60">
                     Başlangıç: {new Date(campaign.startDate).toLocaleDateString('tr-TR')}
                   </div>
@@ -177,13 +177,13 @@ export default function AdminCampaignsPage() {
                   <div className="mb-4">
                     <div className="flex items-center justify-between text-sm mb-2">
                       <span className="text-ottoman-cream/60">Kullanım</span>
-                      <span className="text-ottoman-gold font-semibold">
+                      <span className="text-white font-semibold">
                         {campaign.usage.current} / {campaign.usage.total}
                       </span>
                     </div>
-                    <div className="h-2 bg-ottoman-gold/20 rounded-full overflow-hidden">
+                    <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light"
+                        className="h-full bg-gradient-to-r from-white to-white-light"
                         style={{ width: `${(campaign.usage.current / campaign.usage.total) * 100}%` }}
                       />
                     </div>
@@ -215,7 +215,7 @@ export default function AdminCampaignsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="card-ottoman text-center">
-            <div className="text-3xl font-bold text-ottoman-gold mb-2">
+            <div className="text-3xl font-bold text-white mb-2">
               {campaigns.length}
             </div>
             <div className="text-sm text-ottoman-cream/70">Toplam Kampanya</div>

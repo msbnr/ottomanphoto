@@ -8,6 +8,7 @@ export interface ApiError extends Error {
 /**
  * Global error handler middleware
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorHandler = (err: ApiError, req: Request, res: Response, next: NextFunction): void => {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';

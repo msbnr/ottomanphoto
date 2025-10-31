@@ -45,6 +45,55 @@ const userSchema = new Schema<IUser>(
         postalCode: String,
       },
     },
+    addresses: [
+      {
+        title: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        fullName: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        phone: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        street: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        city: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        state: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        country: {
+          type: String,
+          required: true,
+          default: 'Türkiye',
+          trim: true,
+        },
+        postalCode: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        isDefault: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,
@@ -60,7 +109,7 @@ const userSchema = new Schema<IUser>(
 );
 
 // Index for faster queries
-userSchema.index({ email: 1 });
+// Note: email already has a unique index from the schema definition
 userSchema.index({ userType: 1 });
 
 // Hash password before saving

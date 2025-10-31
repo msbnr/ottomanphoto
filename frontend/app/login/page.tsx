@@ -4,22 +4,49 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Mail, Lock, LogIn, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { authAPI } from '@/lib/api'
+import { useAuthStore } from '@/store/authStore'
 
 export default function LoginPage() {
+  const router = useRouter()
+  const setAuth = useAuthStore((state) => state.setAuth)
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
-    // TODO: Implement actual login with API
-    setTimeout(() => {
+    try {
+      const response = await authAPI.login(email, password)
+
+      // Backend response format: { success, data: { user, token } }
+      const { user, token } = response.data.data
+
+      // Save auth state
+      setAuth(user, token)
+
+      // Redirect based on user type with page reload
+      if (user.userType === 'admin') {
+        window.location.href = '/admin'
+      } else {
+        window.location.href = '/'
+      }
+    } catch (err: any) {
+      console.error('Login error:', err)
+      setError(
+        err.response?.data?.message ||
+        'Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyin.'
+      )
+    } finally {
       setLoading(false)
-    }, 1500)
+    }
   }
 
   return (
@@ -41,7 +68,7 @@ export default function LoginPage() {
                   className="h-14 w-auto object-contain"
                 />
               </div>
-              <h1 className="text-3xl font-serif font-bold text-ottoman-gold mb-2">
+              <h1 className="text-3xl font-serif font-bold text-white mb-2">
                 Hoş Geldiniz
               </h1>
               <p className="text-ottoman-cream/70">
@@ -51,13 +78,21 @@ export default function LoginPage() {
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="card-ottoman space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-500">{error}</p>
+                </div>
+              )}
+
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-ottoman-cream mb-2">
                   E-posta
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type="email"
                     placeholder="ornek@email.com"
@@ -75,7 +110,7 @@ export default function LoginPage() {
                   Şifre
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold w-5 h-5" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
@@ -87,7 +122,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-ottoman-gold hover:text-ottoman-gold-light"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white hover:text-white-light"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -99,11 +134,11 @@ export default function LoginPage() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 border-2 border-ottoman-gold/30 rounded bg-ottoman-black-lighter"
+                    className="w-4 h-4 border-2 border-white/30 rounded bg-ottoman-black-lighter"
                   />
                   <span className="text-sm text-ottoman-cream/70">Beni Hatırla</span>
                 </label>
-                <Link href="/forgot-password" className="text-sm text-ottoman-gold hover:text-ottoman-gold-light">
+                <Link href="/forgot-password" className="text-sm text-white hover:text-white-light">
                   Şifremi Unuttum
                 </Link>
               </div>
@@ -135,15 +170,15 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-ottoman-cream/70">
                 Hesabınız yok mu?{' '}
-                <Link href="/register" className="text-ottoman-gold hover:text-ottoman-gold-light font-semibold">
+                <Link href="/register" className="text-white hover:text-white-light font-semibold">
                   Kayıt Olun
                 </Link>
               </p>
             </div>
 
             {/* Test Credentials */}
-            <div className="mt-8 card-ottoman bg-ottoman-gold/5">
-              <h4 className="text-sm font-semibold text-ottoman-gold mb-2">Test Hesapları:</h4>
+            <div className="mt-8 card-ottoman bg-white/5">
+              <h4 className="text-sm font-semibold text-white mb-2">Test Hesapları:</h4>
               <div className="space-y-2 text-xs text-ottoman-cream/70">
                 <div>
                   <strong className="text-ottoman-cream">Admin:</strong> admin@ottoman.com / admin123

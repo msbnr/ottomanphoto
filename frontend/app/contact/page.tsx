@@ -1,12 +1,17 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send } from 'lucide-react'
+import {
+  Mail, Phone, MapPin, Send, Clock,
+  CheckCircle, AlertCircle, MessageSquare
+} from 'lucide-react'
 import { useState } from 'react'
+import { contactAPI } from '@/lib/api'
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,12 +23,17 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
-    // TODO: API call
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      await contactAPI.submit(formData)
       setSubmitted(true)
-    }, 1500)
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Mesaj gönderilirken bir hata oluştu')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -37,7 +47,7 @@ export default function ContactPage() {
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <Send className="w-10 h-10 text-green-500" />
           </div>
-          <h2 className="text-3xl font-serif font-bold text-ottoman-gold mb-4">
+          <h2 className="text-3xl font-serif font-bold text-white mb-4">
             Mesajınız Gönderildi!
           </h2>
           <p className="text-ottoman-cream/80 mb-6">
@@ -77,8 +87,8 @@ export default function ContactPage() {
           >
             <div className="card-ottoman">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-ottoman-gold/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-6 h-6 text-ottoman-gold" />
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-ottoman-cream mb-2">Adres</h3>
@@ -91,8 +101,8 @@ export default function ContactPage() {
 
             <div className="card-ottoman">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-ottoman-gold/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-6 h-6 text-ottoman-gold" />
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-ottoman-cream mb-2">Telefon</h3>
@@ -105,8 +115,8 @@ export default function ContactPage() {
 
             <div className="card-ottoman">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-ottoman-gold/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-6 h-6 text-ottoman-gold" />
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-ottoman-cream mb-2">E-posta</h3>
@@ -125,6 +135,13 @@ export default function ContactPage() {
             animate={{ opacity: 1, x: 0 }}
           >
             <form onSubmit={handleSubmit} className="card-ottoman space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                  <p className="text-red-500 text-sm">{error}</p>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-ottoman-cream mb-2">
@@ -162,19 +179,28 @@ export default function ContactPage() {
                     className="input-ottoman"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="0555 123 45 67"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-ottoman-cream mb-2">
                     Konu *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     className="input-ottoman"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     required
-                  />
+                  >
+                    <option value="">Konu seçin</option>
+                    <option value="Ürün Hakkında">Ürün Hakkında</option>
+                    <option value="Sipariş Durumu">Sipariş Durumu</option>
+                    <option value="Franchise">Franchise Bilgi</option>
+                    <option value="Bayi Başvurusu">Bayi Başvurusu</option>
+                    <option value="Teknik Destek">Teknik Destek</option>
+                    <option value="Öneri ve Şikayet">Öneri ve Şikayet</option>
+                    <option value="Diğer">Diğer</option>
+                  </select>
                 </div>
               </div>
 

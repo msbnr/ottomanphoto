@@ -44,13 +44,13 @@ export default function NewProductPage() {
           <div>
             <Link
               href="/admin/products"
-              className="inline-flex items-center text-ottoman-gold hover:text-ottoman-gold-light mb-4"
+              className="inline-flex items-center text-white hover:text-white-light mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Geri Dön
             </Link>
             <h1 className="text-3xl font-serif font-bold">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
+              <span className="text-white">
                 Yeni Ürün Ekle
               </span>
             </h1>
@@ -62,7 +62,7 @@ export default function NewProductPage() {
           <div className="card-ottoman space-y-6">
             {/* Basic Info */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Temel Bilgiler
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -152,7 +152,7 @@ export default function NewProductPage() {
 
             {/* Pricing */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Fiyatlandırma (TL)
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -227,14 +227,14 @@ export default function NewProductPage() {
 
             {/* Visibility */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Görünürlük
               </h3>
               <div className="space-y-3">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 bg-ottoman-black-lighter"
+                    className="w-5 h-5 rounded border-2 border-white/30 bg-ottoman-black-lighter"
                     checked={formData.visibleToCustomers}
                     onChange={(e) => setFormData({ ...formData, visibleToCustomers: e.target.checked })}
                   />
@@ -243,7 +243,7 @@ export default function NewProductPage() {
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 bg-ottoman-black-lighter"
+                    className="w-5 h-5 rounded border-2 border-white/30 bg-ottoman-black-lighter"
                     checked={formData.visibleToDealers}
                     onChange={(e) => setFormData({ ...formData, visibleToDealers: e.target.checked })}
                   />

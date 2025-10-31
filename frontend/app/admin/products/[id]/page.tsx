@@ -5,11 +5,16 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Save, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useParams } from 'next/navigation'
+import { productAPI } from '@/lib/api'
 
 export default function EditProductPage() {
   const router = useRouter()
   const params = useParams()
-  const [loading, setLoading] = useState(false)
+  const productId = params.id as string
+  const isNew = productId === 'new'
+
+  const [loading, setLoading] = useState(!isNew)
+  const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -18,46 +23,62 @@ export default function EditProductPage() {
     category: 'Elektronik',
     stock: 0,
     boxQuantity: 1,
-    retailPrice: 0,
-    dealerSmall: 0,
-    dealerMedium: 0,
-    dealerLarge: 0,
-    dealerMain: 0,
-    visibleToCustomers: true,
-    visibleToDealers: true,
+    pricing: {
+      retail: 0,
+      dealer: 0,
+    },
+    isActive: true,
   })
 
-  // Load product data on mount
   useEffect(() => {
-    // TODO: Fetch product data from API
-    // For now, using mock data
-    const mockProduct = {
-      name: 'HP LaserJet Pro Yazıcı',
-      sku: 'YAZICI-001',
-      description: 'Yüksek kaliteli lazer yazıcı',
-      category: 'Elektronik',
-      stock: 50,
-      boxQuantity: 5,
-      retailPrice: 5000,
-      dealerSmall: 4500,
-      dealerMedium: 4200,
-      dealerLarge: 4000,
-      dealerMain: 3800,
-      visibleToCustomers: true,
-      visibleToDealers: true,
+    if (!isNew) {
+      fetchProduct()
     }
-    setFormData(mockProduct)
-  }, [params.id])
+  }, [productId])
+
+  const fetchProduct = async () => {
+    try {
+      const response = await productAPI.getById(productId)
+      // Backend returns { success: true, data: { ...product } }
+      const product = response.data.data || response.data
+      setFormData({
+        name: product.name || '',
+        sku: product.sku || '',
+        description: product.description || '',
+        category: product.category || 'Elektronik',
+        stock: product.stock || 0,
+        boxQuantity: product.boxQuantity || 1,
+        pricing: {
+          retail: product.pricing?.retail || 0,
+          dealer: product.pricing?.dealer || 0,
+        },
+        isActive: product.isActive ?? true,
+      })
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Ürün yüklenirken hata oluştu')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    setSaving(true)
 
-    // TODO: API call to update product
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      if (isNew) {
+        await productAPI.create(formData)
+        alert('Ürün başarıyla oluşturuldu')
+      } else {
+        await productAPI.update(productId, formData)
+        alert('Ürün başarıyla güncellendi')
+      }
       router.push('/admin/products')
-    }, 1500)
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'İşlem sırasında hata oluştu')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleDelete = async () => {
@@ -67,11 +88,23 @@ export default function EditProductPage() {
 
     setDeleting(true)
 
-    // TODO: API call to delete product
-    setTimeout(() => {
-      setDeleting(false)
+    try {
+      await productAPI.delete(productId)
+      alert('Ürün başarıyla silindi')
       router.push('/admin/products')
-    }, 1500)
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Ürün silinirken hata oluştu')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-ottoman-cream/60">Yükleniyor...</p>
+      </div>
+    )
   }
 
   return (
@@ -82,37 +115,39 @@ export default function EditProductPage() {
           <div>
             <Link
               href="/admin/products"
-              className="inline-flex items-center text-ottoman-gold hover:text-ottoman-gold-light mb-4"
+              className="inline-flex items-center text-white hover:text-white-light mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Geri Dön
             </Link>
             <h1 className="text-3xl font-serif font-bold">
-              <span className="bg-gradient-to-r from-ottoman-gold to-ottoman-gold-light bg-clip-text text-transparent">
-                Ürün Düzenle
+              <span className="text-white">
+                {isNew ? 'Yeni Ürün Ekle' : 'Ürün Düzenle'}
               </span>
             </h1>
           </div>
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="btn-ottoman-secondary bg-red-500/20 border-red-500/30 hover:border-red-500 text-red-500 flex items-center space-x-2"
-          >
-            {deleting ? (
-              <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span>Siliniyor...</span>
-              </>
-            ) : (
-              <>
-                <Trash2 className="w-5 h-5" />
-                <span>Ürünü Sil</span>
-              </>
-            )}
-          </button>
+          {!isNew && (
+            <button
+              onClick={handleDelete}
+              disabled={deleting}
+              className="btn-ottoman-secondary bg-red-500/20 border-red-500/30 hover:border-red-500 text-red-500 flex items-center space-x-2"
+            >
+              {deleting ? (
+                <>
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <span>Siliniyor...</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-5 h-5" />
+                  <span>Ürünü Sil</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Form */}
@@ -120,7 +155,7 @@ export default function EditProductPage() {
           <div className="card-ottoman space-y-6">
             {/* Basic Info */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Temel Bilgiler
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -210,10 +245,10 @@ export default function EditProductPage() {
 
             {/* Pricing */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
-                Fiyatlandırma (TL)
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Fiyatlandırma (₺)
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-ottoman-cream mb-2">
                     Perakende Fiyat *
@@ -221,8 +256,8 @@ export default function EditProductPage() {
                   <input
                     type="number"
                     className="input-ottoman"
-                    value={formData.retailPrice}
-                    onChange={(e) => setFormData({ ...formData, retailPrice: parseFloat(e.target.value) })}
+                    value={formData.pricing.retail}
+                    onChange={(e) => setFormData({ ...formData, pricing: { ...formData.pricing, retail: parseFloat(e.target.value) } })}
                     required
                     min="0"
                     step="0.01"
@@ -230,52 +265,14 @@ export default function EditProductPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                    Küçük Bayi
+                    Bayi Fiyatı *
                   </label>
                   <input
                     type="number"
                     className="input-ottoman"
-                    value={formData.dealerSmall}
-                    onChange={(e) => setFormData({ ...formData, dealerSmall: parseFloat(e.target.value) })}
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                    Orta Bayi
-                  </label>
-                  <input
-                    type="number"
-                    className="input-ottoman"
-                    value={formData.dealerMedium}
-                    onChange={(e) => setFormData({ ...formData, dealerMedium: parseFloat(e.target.value) })}
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                    Büyük Bayi
-                  </label>
-                  <input
-                    type="number"
-                    className="input-ottoman"
-                    value={formData.dealerLarge}
-                    onChange={(e) => setFormData({ ...formData, dealerLarge: parseFloat(e.target.value) })}
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-ottoman-cream mb-2">
-                    Ana Bayi
-                  </label>
-                  <input
-                    type="number"
-                    className="input-ottoman"
-                    value={formData.dealerMain}
-                    onChange={(e) => setFormData({ ...formData, dealerMain: parseFloat(e.target.value) })}
+                    value={formData.pricing.dealer}
+                    onChange={(e) => setFormData({ ...formData, pricing: { ...formData.pricing, dealer: parseFloat(e.target.value) } })}
+                    required
                     min="0"
                     step="0.01"
                   />
@@ -283,29 +280,20 @@ export default function EditProductPage() {
               </div>
             </div>
 
-            {/* Visibility */}
+            {/* Status */}
             <div>
-              <h3 className="text-lg font-semibold text-ottoman-gold mb-4">
-                Görünürlük
+              <h3 className="text-lg font-semibold text-white mb-4">
+                Durum
               </h3>
               <div className="space-y-3">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 bg-ottoman-black-lighter"
-                    checked={formData.visibleToCustomers}
-                    onChange={(e) => setFormData({ ...formData, visibleToCustomers: e.target.checked })}
+                    className="w-5 h-5 rounded border-2 border-white/30 bg-ottoman-black-lighter"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                   />
-                  <span className="text-ottoman-cream">Müşterilere Göster</span>
-                </label>
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-5 h-5 rounded border-2 border-ottoman-gold/30 bg-ottoman-black-lighter"
-                    checked={formData.visibleToDealers}
-                    onChange={(e) => setFormData({ ...formData, visibleToDealers: e.target.checked })}
-                  />
-                  <span className="text-ottoman-cream">Bayilere Göster</span>
+                  <span className="text-ottoman-cream">Aktif</span>
                 </label>
               </div>
             </div>
@@ -315,10 +303,10 @@ export default function EditProductPage() {
           <div className="flex items-center space-x-4 mt-6">
             <button
               type="submit"
-              disabled={loading}
+              disabled={saving}
               className="btn-ottoman flex items-center space-x-2"
             >
-              {loading ? (
+              {saving ? (
                 <>
                   <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -329,7 +317,7 @@ export default function EditProductPage() {
               ) : (
                 <>
                   <Save className="w-5 h-5" />
-                  <span>Değişiklikleri Kaydet</span>
+                  <span>{isNew ? 'Oluştur' : 'Değişiklikleri Kaydet'}</span>
                 </>
               )}
             </button>

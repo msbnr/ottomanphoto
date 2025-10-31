@@ -95,9 +95,14 @@ router.post('/init', async (req: Request, res: Response) => {
           dealer_large: 4000,
         },
         stock: 50,
+        boxQuantity: 1,
         isActive: true,
         isFeatured: true,
-        visibility: ['customer', 'dealer'],
+        visibility: {
+          customer: true,
+          dealer: true,
+          dealer_main: true,
+        },
       },
     ];
 

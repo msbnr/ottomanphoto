@@ -120,6 +120,33 @@ export const authAPI = {
   // Change password
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
     api.put('/auth/change-password', data),
+
+  // Admin: User management
+  getAllUsers: () => api.get('/auth/admin/users'),
+
+  createUser: (data: {
+    email: string
+    password: string
+    userType: 'customer' | 'dealer' | 'admin'
+    dealerTier?: 'small' | 'medium' | 'large' | 'main_dealer'
+    firstName: string
+    lastName: string
+    phone?: string
+    companyName?: string
+    taxNumber?: string
+  }) => api.post('/auth/admin/users', data),
+
+  updateUser: (userId: string, data: any) =>
+    api.put(`/auth/admin/users/${userId}`, data),
+
+  deleteUser: (userId: string) =>
+    api.delete(`/auth/admin/users/${userId}`),
+
+  toggleUserStatus: (userId: string) =>
+    api.patch(`/auth/admin/users/${userId}/toggle-status`),
+
+  resetUserPassword: (userId: string, newPassword: string) =>
+    api.patch(`/auth/admin/users/${userId}/reset-password`, { newPassword }),
 }
 
 // Product API

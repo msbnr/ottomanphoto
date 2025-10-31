@@ -90,4 +90,37 @@ router.get('/admin/users', adminAuth, async (req, res) => {
   }
 });
 
+// Admin: Create user
+router.post(
+  '/admin/users',
+  adminAuth,
+  validate([
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('userType').isIn(['customer', 'dealer', 'admin']).withMessage('Invalid user type'),
+    body('firstName').notEmpty().withMessage('First name is required'),
+    body('lastName').notEmpty().withMessage('Last name is required'),
+  ]),
+  authController.createUser
+);
+
+// Admin: Update user
+router.put('/admin/users/:userId', adminAuth, authController.updateUser);
+
+// Admin: Delete user
+router.delete('/admin/users/:userId', adminAuth, authController.deleteUser);
+
+// Admin: Toggle user status
+router.patch('/admin/users/:userId/toggle-status', adminAuth, authController.toggleUserStatus);
+
+// Admin: Reset user password
+router.patch(
+  '/admin/users/:userId/reset-password',
+  adminAuth,
+  validate([
+    body('newPassword').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  ]),
+  authController.resetUserPassword
+);
+
 export default router;

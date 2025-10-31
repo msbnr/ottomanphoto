@@ -451,3 +451,206 @@ export const changePassword = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+/**
+ * Admin: Create new user
+ */
+export const createUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password, userType, dealerTier, firstName, lastName, phone, companyName, taxNumber } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({ success: false, message: 'Email already registered' });
+      return;
+    }
+
+    // Create new user
+    const userData: any = {
+      email,
+      password,
+      userType,
+      isActive: true,
+      profile: {
+        firstName,
+        lastName,
+        phone,
+      },
+    };
+
+    // Add dealer-specific fields
+    if (userType === 'dealer') {
+      userData.dealerTier = dealerTier || 'small';
+      if (companyName) userData.profile.companyName = companyName;
+      if (taxNumber) userData.profile.taxNumber = taxNumber;
+    }
+
+    const user = await User.create(userData);
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      data: {
+        id: user._id,
+        email: user.email,
+        userType: user.userType,
+        dealerTier: user.dealerTier,
+        profile: user.profile,
+        isActive: user.isActive,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Admin: Update user
+ */
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const { email, userType, dealerTier, firstName, lastName, phone, companyName, taxNumber, isActive } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    // Check if email is being changed and if it's already taken
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        res.status(400).json({ success: false, message: 'Email already in use' });
+        return;
+      }
+      user.email = email;
+    }
+
+    // Update basic fields
+    if (userType) user.userType = userType;
+    if (dealerTier) user.dealerTier = dealerTier;
+    if (isActive !== undefined) user.isActive = isActive;
+
+    // Update profile fields
+    if (firstName) user.profile.firstName = firstName;
+    if (lastName) user.profile.lastName = lastName;
+    if (phone !== undefined) user.profile.phone = phone;
+    if (companyName !== undefined) user.profile.companyName = companyName;
+    if (taxNumber !== undefined) user.profile.taxNumber = taxNumber;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'User updated successfully',
+      data: {
+        id: user._id,
+        email: user.email,
+        userType: user.userType,
+        dealerTier: user.dealerTier,
+        profile: user.profile,
+        isActive: user.isActive,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Admin: Delete user
+ */
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    // Prevent deleting admin users (safety measure)
+    if (user.userType === 'admin') {
+      res.status(403).json({ success: false, message: 'Cannot delete admin users' });
+      return;
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully',
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Admin: Toggle user active status
+ */
+export const toggleUserStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    user.isActive = !user.isActive;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: `User ${user.isActive ? 'activated' : 'deactivated'} successfully`,
+      data: {
+        id: user._id,
+        email: user.email,
+        isActive: user.isActive,
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Admin: Reset user password
+ */
+export const resetUserPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+      return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User not found' });
+      return;
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully',
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

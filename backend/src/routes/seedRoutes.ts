@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import { User, Product, Category } from '../models';
-import bcrypt from 'bcryptjs';
 
 const router = Router();
 
@@ -35,11 +34,11 @@ router.post('/init', async (req: Request, res: Response) => {
     }
 
     // Create admin user
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    // Note: Password will be automatically hashed by User model pre-save hook
     const adminUser = await User.create({
       name: 'Admin',
       email: 'admin@ottoman.com',
-      password: hashedPassword,
+      password: 'admin123', // Will be hashed automatically
       role: 'admin',
       isActive: true,
     });

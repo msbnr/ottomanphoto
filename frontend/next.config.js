@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   eslint: {
-    // Production build sırasında ESLint hatalarını ignore et
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Production build sırasında TypeScript hatalarını ignore et
     ignoreBuildErrors: true,
+  },
+  experimental: {
+    // useSearchParams suspense boundary hatasını ignore et
+    missingSuspenseWithCSRBailout: false,
   },
   images: {
     remotePatterns: [

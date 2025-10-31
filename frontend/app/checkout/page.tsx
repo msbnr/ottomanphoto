@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import {
-  MapPin, Plus, CreditCard, Banknote, Truck,
-  ShoppingCart, X, ChevronRight, AlertCircle
+  MapPin, Plus, CreditCard, Banknote,
+  ShoppingCart, X, ChevronRight, AlertCircle, ExternalLink
 } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
 import { authAPI, orderAPI } from '@/lib/api'
+import { cities } from '@/lib/cities'
 
 interface Address {
   _id: string
@@ -24,7 +25,7 @@ interface Address {
   isDefault: boolean
 }
 
-type PaymentMethod = 'credit_card' | 'bank_transfer' | 'cash_on_delivery'
+type PaymentMethod = 'credit_card' | 'bank_transfer'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -33,7 +34,7 @@ export default function CheckoutPage() {
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash_on_delivery')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bank_transfer')
   const [notes, setNotes] = useState('')
   const [showAddressForm, setShowAddressForm] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -52,6 +53,9 @@ export default function CheckoutPage() {
     isDefault: false,
   })
 
+  // Selected city's districts
+  const [selectedCityDistricts, setSelectedCityDistricts] = useState<string[]>([])
+
   useEffect(() => {
     // Redirect if not authenticated
     if (!isAuthenticated) {
@@ -67,6 +71,17 @@ export default function CheckoutPage() {
 
     fetchAddresses()
   }, [isAuthenticated, items.length])
+
+  // Update districts when city changes
+  useEffect(() => {
+    const selectedCity = cities.find(c => c.name === newAddress.city)
+    if (selectedCity) {
+      setSelectedCityDistricts(selectedCity.districts)
+    } else {
+      setSelectedCityDistricts([])
+      setNewAddress(prev => ({ ...prev, state: '' }))
+    }
+  }, [newAddress.city])
 
   const fetchAddresses = async () => {
     try {
@@ -84,6 +99,14 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error('Error fetching addresses:', error)
     }
+  }
+
+  const handlePhoneChange = (value: string) => {
+    // Sadece rakamları al
+    const numbersOnly = value.replace(/\D/g, '')
+    // 11 hane ile sınırla
+    const limited = numbersOnly.slice(0, 11)
+    setNewAddress({ ...newAddress, phone: limited })
   }
 
   const handleAddAddress = async (e: React.FormEvent) => {
@@ -157,7 +180,8 @@ export default function CheckoutPage() {
       if (paymentMethod === 'credit_card') {
         try {
           const token = localStorage.getItem('token')
-          const paymentResponse = await fetch('http://localhost:5000/api/payment/paytr/create-token', {
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+          const paymentResponse = await fetch(`${API_URL}/payment/paytr/create-token`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -190,6 +214,7 @@ export default function CheckoutPage() {
         router.push(`/order-confirmation/${orderId}`)
       }
     } catch (error: any) {
+      console.error('Order creation error:', error)
       setError(error.response?.data?.message || 'Sipariş oluşturulurken hata oluştu')
     } finally {
       if (paymentMethod !== 'credit_card') {
@@ -293,44 +318,65 @@ export default function CheckoutPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-ottoman-cream/70 mb-2">
-                        Telefon *
+                        Telefon * (11 hane)
                       </label>
                       <input
                         type="tel"
                         value={newAddress.phone}
-                        onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
+                        onChange={(e) => handlePhoneChange(e.target.value)}
+                        placeholder="05XXXXXXXXX"
                         required
+                        pattern="[0-9]{11}"
+                        maxLength={11}
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-ottoman-gold"
                       />
+                      <p className="text-xs text-ottoman-cream/50 mt-1">
+                        {newAddress.phone.length}/11 rakam
+                      </p>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-ottoman-cream/70 mb-2">
                         Şehir *
                       </label>
-                      <input
-                        type="text"
+                      <select
                         value={newAddress.city}
                         onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
                         required
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-ottoman-gold"
-                      />
+                      >
+                        <option value="">Şehir Seçin</option>
+                        {cities.map((city) => (
+                          <option key={city.name} value={city.name}>
+                            {city.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-ottoman-cream/70 mb-2">
                         İlçe *
                       </label>
-                      <input
-                        type="text"
+                      <select
                         value={newAddress.state}
                         onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
                         required
-                        className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-ottoman-gold"
-                      />
+                        disabled={!newAddress.city}
+                        className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-ottoman-gold disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="">
+                          {newAddress.city ? 'İlçe Seçin' : 'Önce şehir seçin'}
+                        </option>
+                        {selectedCityDistricts.map((district) => (
+                          <option key={district} value={district}>
+                            {district}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
-                    <div>
+                    <div className="relative">
                       <label className="block text-sm font-medium text-ottoman-cream/70 mb-2">
                         Posta Kodu *
                       </label>
@@ -341,6 +387,15 @@ export default function CheckoutPage() {
                         required
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-ottoman-gold"
                       />
+                      <a
+                        href="https://postakodu.ptt.gov.tr/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-ottoman-gold hover:text-ottoman-cream mt-1 transition-colors"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        Posta Kodu Sorgula
+                      </a>
                     </div>
 
                     <div className="md:col-span-2">
@@ -352,6 +407,7 @@ export default function CheckoutPage() {
                         onChange={(e) => setNewAddress({ ...newAddress, street: e.target.value })}
                         rows={3}
                         required
+                        placeholder="Mahalle, cadde, sokak, bina no, daire no"
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-ottoman-gold"
                       />
                     </div>
@@ -456,37 +512,6 @@ export default function CheckoutPage() {
               </div>
 
               <div className="space-y-3">
-                <motion.div
-                  className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
-                    paymentMethod === 'cash_on_delivery'
-                      ? 'bg-ottoman-gold/10 border-ottoman-gold'
-                      : 'bg-white/5 border-white/10 hover:border-white/30'
-                  }`}
-                  onClick={() => setPaymentMethod('cash_on_delivery')}
-                  whileHover={{ scale: 1.01 }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Truck className="w-5 h-5 text-ottoman-gold" />
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">Kapıda Ödeme</h3>
-                        <p className="text-sm text-ottoman-cream/70">
-                          Ürün teslim alınırken nakit veya kartla ödeme
-                        </p>
-                      </div>
-                    </div>
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      paymentMethod === 'cash_on_delivery'
-                        ? 'border-ottoman-gold bg-ottoman-gold'
-                        : 'border-white/30'
-                    }`}>
-                      {paymentMethod === 'cash_on_delivery' && (
-                        <div className="w-3 h-3 bg-black rounded-full" />
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-
                 <motion.div
                   className={`p-4 rounded-lg border-2 transition-all cursor-pointer ${
                     paymentMethod === 'bank_transfer'

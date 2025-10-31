@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { Order, Product, User } from '../models';
 import { getProductPrice } from '../utils/pricing';
 
@@ -32,6 +33,12 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     const orderItems = [];
 
     for (const item of items) {
+      // Validate productId is a valid ObjectId
+      if (!mongoose.Types.ObjectId.isValid(item.productId)) {
+        res.status(400).json({ success: false, message: `Invalid product ID: ${item.productId}` });
+        return;
+      }
+
       const product = await Product.findById(item.productId);
 
       if (!product) {

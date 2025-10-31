@@ -175,22 +175,6 @@ export default function LoginPage() {
                 </Link>
               </p>
             </div>
-
-            {/* Test Credentials */}
-            <div className="mt-8 card-ottoman bg-white/5">
-              <h4 className="text-sm font-semibold text-white mb-2">Test Hesapları:</h4>
-              <div className="space-y-2 text-xs text-ottoman-cream/70">
-                <div>
-                  <strong className="text-ottoman-cream">Admin:</strong> admin@ottoman.com / admin123
-                </div>
-                <div>
-                  <strong className="text-ottoman-cream">Müşteri:</strong> customer@test.com / 123456
-                </div>
-                <div>
-                  <strong className="text-ottoman-cream">Bayi:</strong> dealer@test.com / 123456
-                </div>
-              </div>
-            </div>
           </motion.div>
         </div>
       </div>

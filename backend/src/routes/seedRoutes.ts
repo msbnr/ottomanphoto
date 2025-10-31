@@ -36,11 +36,14 @@ router.post('/init', async (req: Request, res: Response) => {
     // Create admin user
     // Note: Password will be automatically hashed by User model pre-save hook
     const adminUser = await User.create({
-      name: 'Admin',
       email: 'admin@ottoman.com',
       password: 'admin123', // Will be hashed automatically
-      role: 'admin',
+      userType: 'admin',
       isActive: true,
+      profile: {
+        firstName: 'Admin',
+        lastName: 'User',
+      },
     });
 
     // Create categories

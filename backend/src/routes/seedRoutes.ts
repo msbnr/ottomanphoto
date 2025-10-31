@@ -87,7 +87,8 @@ router.post('/init', async (req: Request, res: Response) => {
         images: ['https://via.placeholder.com/500x500?text=Printer'],
         pricing: {
           retail: 5000,
-          dealer_small: 4500,
+          dealer_main: 4500,
+          dealer_small: 4300,
           dealer_medium: 4200,
           dealer_large: 4000,
         },

@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 import path from 'path';
 
 // Storage configuration
@@ -67,7 +67,7 @@ class StorageService {
   private async uploadToR2(file: Express.Multer.File, folder: string): Promise<UploadResult> {
     try {
       const ext = path.extname(file.originalname);
-      const filename = `${uuidv4()}${ext}`;
+      const filename = `${crypto.randomUUID()}${ext}`;
       const key = `${folder}/${filename}`;
 
       const command = new PutObjectCommand({

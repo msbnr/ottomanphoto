@@ -106,6 +106,163 @@ class EmailService {
   // EMAIL TEMPLATES
   // ============================================
 
+  /**
+   * Common email styles (Ottoman Platform branding)
+   */
+  private getCommonEmailStyles(): string {
+    return `
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #2d2d2d;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .header {
+        background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 100%);
+        color: #f5f1e8;
+        padding: 40px 30px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0 0 10px 0;
+        font-size: 32px;
+        font-weight: 700;
+        color: #d4af37;
+      }
+      .header p {
+        margin: 0;
+        font-size: 14px;
+        color: #f5f1e8;
+        opacity: 0.9;
+      }
+      .content {
+        background: #ffffff;
+        padding: 40px 30px;
+        color: #2d2d2d;
+      }
+      .content h2 {
+        color: #1a1a1a;
+        font-size: 24px;
+        margin: 0 0 20px 0;
+      }
+      .content h3 {
+        color: #1a1a1a;
+        font-size: 18px;
+        margin: 25px 0 15px 0;
+      }
+      .content p {
+        margin: 0 0 15px 0;
+        color: #555;
+      }
+      .content ul {
+        margin: 20px 0;
+        padding-left: 20px;
+      }
+      .content ul li {
+        margin: 10px 0;
+        color: #555;
+      }
+      .footer {
+        background: #0A0A0A;
+        padding: 25px;
+        text-align: center;
+        font-size: 12px;
+        color: #f5f1e8;
+      }
+      .footer p {
+        margin: 5px 0;
+        opacity: 0.8;
+      }
+      .button {
+        display: inline-block;
+        padding: 14px 35px;
+        background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+        color: #1a1a1a !important;
+        text-decoration: none;
+        border-radius: 6px;
+        margin: 20px 0;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 4px 6px rgba(212, 175, 55, 0.3);
+      }
+      .highlight {
+        color: #d4af37;
+        font-weight: bold;
+      }
+      .message-box {
+        background: linear-gradient(to right, #fff9e6, #ffffff);
+        border-left: 4px solid #d4af37;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 4px;
+      }
+      .warning {
+        background: linear-gradient(to right, #fff9e6, #ffffff);
+        border-left: 4px solid #d4af37;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 4px;
+      }
+      .warning strong {
+        color: #1a1a1a;
+      }
+      .success-box {
+        background: linear-gradient(to right, #e8f5e9, #ffffff);
+        border-left: 4px solid #4caf50;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 4px;
+      }
+      .info-box {
+        background: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .code-block {
+        background: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 15px;
+        margin: 20px 0;
+        word-break: break-all;
+        color: #666;
+        font-size: 12px;
+        font-family: 'Courier New', monospace;
+      }
+      .divider {
+        margin: 30px 0;
+        border: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #d4af37, transparent);
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin: 10px 0;
+      }
+      .status-approved {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .status-rejected {
+        background: #ffebee;
+        color: #c62828;
+      }
+    `;
+  }
+
   private getWelcomeEmailTemplate(userName: string, userType: 'customer' | 'dealer'): string {
     const userTypeText = userType === 'dealer' ? 'Bayimiz' : 'Müşterimiz';
     return `
@@ -113,15 +270,7 @@ class EmailService {
       <html>
       <head>
         <meta charset="utf-8">
-        <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: #f5f1e8; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-          .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }
-          .footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }
-          .button { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); color: #f5f1e8 !important; text-decoration: none; border-radius: 5px; margin: 20px 0; }
-          .highlight { color: #d4af37; font-weight: bold; }
-        </style>
+        <style>${this.getCommonEmailStyles()}</style>
       </head>
       <body>
         <div class="container">
@@ -175,15 +324,7 @@ class EmailService {
       <html>
       <head>
         <meta charset="utf-8">
-        <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: #f5f1e8; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-          .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }
-          .footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }
-          .button { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: #1a1a1a !important; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
-          .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }
-        </style>
+        <style>${this.getCommonEmailStyles()}</style>
       </head>
       <body>
         <div class="container">
@@ -204,12 +345,12 @@ class EmailService {
             </div>
 
             <p><strong>Buton çalışmıyorsa</strong> aşağıdaki linki tarayıcınıza kopyalayın:</p>
-            <p style="word-break: break-all; color: #666; font-size: 12px;">${resetUrl}</p>
+            <div class="code-block">${resetUrl}</div>
 
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+            <hr class="divider">
 
             <p style="color: #999; font-size: 13px;">
-              <strong>Bu talebi siz yapmadıysanız</strong> bu e-postayı güvenle görmezden gelebilirsiniz. Şifreniz değiştirilmeyecektir.
+              <strong style="color: #1a1a1a;">Bu talebi siz yapmadıysanız</strong> bu e-postayı güvenle görmezden gelebilirsiniz. Şifreniz değiştirilmeyecektir.
             </p>
           </div>
           <div class="footer">
@@ -227,14 +368,7 @@ class EmailService {
       <html>
       <head>
         <meta charset="utf-8">
-        <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: #f5f1e8; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-          .content { background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; }
-          .footer { background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666; border-radius: 0 0 10px 10px; }
-          .message-box { background: #f8f9fa; border-left: 4px solid #d4af37; padding: 20px; margin: 20px 0; border-radius: 5px; }
-        </style>
+        <style>${this.getCommonEmailStyles()}</style>
       </head>
       <body>
         <div class="container">
